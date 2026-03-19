@@ -8,6 +8,7 @@ class WPGS_Lists {
     const POST_TYPE = 'wpgs_list';
     const META_GROUPS = '_wpgs_groups';
     const META_DISPLAY = '_wpgs_display';
+    const GAMES_CATALOG_TRANSIENT = 'wpgs_games_catalog';
     const META_CAMPAIGN = '_wpgs_campaign';
     const META_CAMPAIGN_ENDED = '_wpgs_campaign_ended';
     const META_CAMPAIGN_ENDED_AT = '_wpgs_campaign_ended_at';
@@ -182,7 +183,7 @@ class WPGS_Lists {
             array($this, 'render_campaign_metabox'),
             self::POST_TYPE,
             'side',
-            'high'
+            'default'
         );
 
         add_meta_box(
@@ -251,6 +252,7 @@ class WPGS_Lists {
         wp_nonce_field('wpgs_save_list_meta', 'wpgs_list_nonce');
 
         $groups = self::get_groups($post->ID);
+        $games_catalog = self::get_games_catalog();
         if (empty($groups)) {
             $groups = array(
                 array(
@@ -260,15 +262,32 @@ class WPGS_Lists {
             );
         }
 
-        echo '<p>' . esc_html__('Add one or more game groups. Each group has one game ID and one or more server addresses.', 'gamequery-server-lists') . '</p>';
+        if (!empty($games_catalog)) {
+            echo '<p>' . esc_html__('Add one or more game groups. Search by game name and add one or more server addresses.', 'gamequery-server-lists') . '</p>';
+        } else {
+            echo '<p>' . esc_html__('Add one or more game groups. Each group has one game ID and one or more server addresses.', 'gamequery-server-lists') . '</p>';
+        }
+
         echo '<div id="wpgs-groups" class="wpgs-groups">';
 
         foreach ($groups as $index => $group) {
-            $this->render_group_row((int) $index, $group);
+            $this->render_group_row((int) $index, $group, $games_catalog);
         }
 
         echo '</div>';
+
+        if (!empty($games_catalog)) {
+            echo '<datalist id="wpgs-game-catalog">';
+            foreach ($games_catalog as $game_id => $game_name) {
+                echo '<option value="' . esc_attr($game_name) . '" data-game-id="' . esc_attr($game_id) . '" label="' . esc_attr($game_id) . '"></option>';
+            }
+            echo '</datalist>';
+        }
+
         echo '<p><button type="button" class="button" id="wpgs-add-group">' . esc_html__('Add Group', 'gamequery-server-lists') . '</button></p>';
+        if (!empty($games_catalog)) {
+            echo '<p class="description">' . esc_html__('Tip: start typing a game name and select it from the dropdown. If your game is not listed, you can still type the raw game ID.', 'gamequery-server-lists') . '</p>';
+        }
         echo '<p class="description">' . esc_html__('Server format: IP:PORT (example: 127.0.0.1:27015). One server per line or comma-separated.', 'gamequery-server-lists') . '</p>';
 
         $this->render_groups_metabox_script();
@@ -427,11 +446,13 @@ class WPGS_Lists {
     /**
      * @param int $index
      * @param array<string, mixed> $group
+     * @param array<string, string> $games_catalog
      */
-    private function render_group_row($index, $group) {
+    private function render_group_row($index, $group, $games_catalog = array()) {
         $game_id = isset($group['game_id']) ? (string) $group['game_id'] : '';
         $servers = isset($group['servers']) && is_array($group['servers']) ? $group['servers'] : array();
         $servers_value = implode("\n", array_map('strval', $servers));
+        $game_display = isset($games_catalog[$game_id]) ? (string) $games_catalog[$game_id] : $game_id;
 
         echo '<div class="wpgs-group-row" data-index="' . esc_attr((string) $index) . '">';
         echo '<div class="wpgs-group-row-head">';
@@ -439,8 +460,13 @@ class WPGS_Lists {
         echo '<button type="button" class="button-link-delete wpgs-remove-group">' . esc_html__('Remove', 'gamequery-server-lists') . '</button>';
         echo '</div>';
         echo '<p>';
-        echo '<label><strong>' . esc_html__('Game ID', 'gamequery-server-lists') . '</strong></label>';
-        echo '<input type="text" class="widefat" name="wpgs_groups[' . esc_attr((string) $index) . '][game_id]" value="' . esc_attr($game_id) . '" placeholder="counterstrike16" />';
+        if (!empty($games_catalog)) {
+            echo '<label><strong>' . esc_html__('Game', 'gamequery-server-lists') . '</strong></label>';
+            echo '<input type="text" class="widefat" list="wpgs-game-catalog" name="wpgs_groups[' . esc_attr((string) $index) . '][game_id]" value="' . esc_attr($game_display) . '" placeholder="' . esc_attr__('Search game name...', 'gamequery-server-lists') . '" autocomplete="off" />';
+        } else {
+            echo '<label><strong>' . esc_html__('Game ID', 'gamequery-server-lists') . '</strong></label>';
+            echo '<input type="text" class="widefat" name="wpgs_groups[' . esc_attr((string) $index) . '][game_id]" value="' . esc_attr($game_id) . '" placeholder="counterstrike16" />';
+        }
         echo '</p>';
         echo '<p>';
         echo '<label><strong>' . esc_html__('Servers', 'gamequery-server-lists') . '</strong></label>';
@@ -933,13 +959,16 @@ class WPGS_Lists {
      */
     private function sanitize_groups($raw_groups) {
         $groups = array();
+        $games_catalog = self::get_games_catalog();
+        $games_lookup = self::build_games_catalog_lookup($games_catalog);
 
         foreach ($raw_groups as $raw_group) {
             if (!is_array($raw_group)) {
                 continue;
             }
 
-            $game_id = isset($raw_group['game_id']) ? sanitize_text_field((string) $raw_group['game_id']) : '';
+            $game_input = isset($raw_group['game_id']) ? sanitize_text_field((string) $raw_group['game_id']) : '';
+            $game_id = self::resolve_game_id_from_input($game_input, $games_catalog, $games_lookup);
             $game_id = preg_replace('/[^a-zA-Z0-9_-]/', '', $game_id);
 
             if (empty($game_id)) {
@@ -1616,6 +1645,164 @@ class WPGS_Lists {
         }
 
         return trim($value);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function get_games_catalog() {
+        $cached = get_transient(self::GAMES_CATALOG_TRANSIENT);
+        if (is_array($cached) && !empty($cached)) {
+            return self::normalize_games_catalog($cached);
+        }
+
+        $settings = WPGS_Settings::get_settings();
+        $api_base_url = isset($settings['api_base_url']) ? untrailingslashit((string) $settings['api_base_url']) : '';
+
+        $urls = array();
+        if ('' !== $api_base_url) {
+            $urls[] = $api_base_url . '/get/games';
+        }
+
+        $urls[] = 'https://api.gamequery.dev/v1/get/games';
+        $urls = array_values(array_unique($urls));
+
+        $games_catalog = array();
+        foreach ($urls as $url) {
+            $response = wp_remote_get(
+                $url,
+                array(
+                    'timeout' => 15,
+                    'headers' => array(
+                        'Accept' => 'application/json',
+                    ),
+                )
+            );
+
+            if (is_wp_error($response)) {
+                continue;
+            }
+
+            $status_code = (int) wp_remote_retrieve_response_code($response);
+            if ($status_code < 200 || $status_code >= 300) {
+                continue;
+            }
+
+            $body = (string) wp_remote_retrieve_body($response);
+            $decoded = json_decode($body, true);
+            $games_catalog = self::normalize_games_catalog($decoded);
+            if (!empty($games_catalog)) {
+                break;
+            }
+        }
+
+        if (!empty($games_catalog)) {
+            set_transient(self::GAMES_CATALOG_TRANSIENT, $games_catalog, 12 * HOUR_IN_SECONDS);
+            return $games_catalog;
+        }
+
+        if (is_array($cached)) {
+            return self::normalize_games_catalog($cached);
+        }
+
+        return array();
+    }
+
+    /**
+     * @param mixed $source
+     * @return array<string, string>
+     */
+    private static function normalize_games_catalog($source) {
+        if (!is_array($source)) {
+            return array();
+        }
+
+        $catalog = array();
+
+        foreach ($source as $raw_key => $raw_value) {
+            $game_id = '';
+            $game_name = '';
+
+            if (is_string($raw_key) && is_string($raw_value)) {
+                $game_id = $raw_key;
+                $game_name = $raw_value;
+            } elseif (is_array($raw_value)) {
+                $game_id = isset($raw_value['id']) ? (string) $raw_value['id'] : '';
+                $game_name = isset($raw_value['name']) ? (string) $raw_value['name'] : '';
+            }
+
+            $game_id = preg_replace('/[^a-zA-Z0-9_-]/', '', sanitize_text_field($game_id));
+            $game_name = sanitize_text_field($game_name);
+
+            if (!is_string($game_id) || '' === $game_id || '' === $game_name) {
+                continue;
+            }
+
+            $catalog[$game_id] = $game_name;
+        }
+
+        if (!empty($catalog)) {
+            asort($catalog, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+
+        return $catalog;
+    }
+
+    /**
+     * @param array<string, string> $games_catalog
+     * @return array<string, string>
+     */
+    private static function build_games_catalog_lookup($games_catalog) {
+        $lookup = array();
+
+        foreach ($games_catalog as $game_id => $game_name) {
+            $normalized_id = self::normalize_game_catalog_key($game_id);
+            if ('' !== $normalized_id) {
+                $lookup[$normalized_id] = (string) $game_id;
+            }
+
+            $normalized_name = self::normalize_game_catalog_key($game_name);
+            if ('' !== $normalized_name && !isset($lookup[$normalized_name])) {
+                $lookup[$normalized_name] = (string) $game_id;
+            }
+        }
+
+        return $lookup;
+    }
+
+    /**
+     * @param string $game_input
+     * @param array<string, string> $games_catalog
+     * @param array<string, string> $games_lookup
+     * @return string
+     */
+    private static function resolve_game_id_from_input($game_input, $games_catalog, $games_lookup) {
+        $game_input = trim(sanitize_text_field((string) $game_input));
+        if ('' === $game_input) {
+            return '';
+        }
+
+        if (isset($games_catalog[$game_input])) {
+            return (string) $game_input;
+        }
+
+        $normalized_key = self::normalize_game_catalog_key($game_input);
+        if ('' !== $normalized_key && isset($games_lookup[$normalized_key])) {
+            return (string) $games_lookup[$normalized_key];
+        }
+
+        return $game_input;
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    private static function normalize_game_catalog_key($value) {
+        $value = strtolower(trim((string) $value));
+        $value = preg_replace('/\s+/', ' ', $value);
+
+        return is_string($value) ? $value : '';
     }
 
     /**
