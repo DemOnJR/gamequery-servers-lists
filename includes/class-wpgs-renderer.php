@@ -24,26 +24,26 @@ class WPGS_Renderer {
     public function render_list($list_id) {
         $list_id = absint($list_id);
         if ($list_id <= 0) {
-            return $this->render_notice(__('Invalid list ID.', 'gamequery-server-lists'), 'warning');
+            return $this->render_notice(__('Invalid list ID.', 'gamequery-servers-lists'), 'warning');
         }
 
         $post = get_post($list_id);
         if (!$post || WPGS_Lists::POST_TYPE !== $post->post_type || 'publish' !== $post->post_status) {
-            return $this->render_notice(__('WPGS list not found or not published.', 'gamequery-server-lists'), 'warning');
+            return $this->render_notice(__('WPGS list not found or not published.', 'gamequery-servers-lists'), 'warning');
         }
 
         $groups = WPGS_Lists::get_groups($list_id);
         if (empty($groups)) {
-            return $this->render_notice(__('This server list is empty.', 'gamequery-server-lists'), 'info');
+            return $this->render_notice(__('This server list is empty.', 'gamequery-servers-lists'), 'info');
         }
 
         $result = $this->api_client->get_or_refresh_list_cache($list_id);
         if (empty($result['success'])) {
             $error_code = isset($result['error_code']) ? (string) $result['error_code'] : '';
-            $message = __('Server list temporarily unavailable.', 'gamequery-server-lists');
+            $message = __('Server list temporarily unavailable.', 'gamequery-servers-lists');
 
             if ('quota_exceeded' === $error_code) {
-                $message = __('Server list temporarily unavailable (API quota exceeded).', 'gamequery-server-lists');
+                $message = __('Server list temporarily unavailable (API quota exceeded).', 'gamequery-servers-lists');
             }
 
             return $this->render_notice($message, 'warning');
@@ -55,7 +55,7 @@ class WPGS_Renderer {
         $rows = $this->build_rows($groups, $payload);
 
         if (empty($rows)) {
-            return $this->render_notice(__('No server data available yet.', 'gamequery-server-lists'), 'info');
+            return $this->render_notice(__('No server data available yet.', 'gamequery-servers-lists'), 'info');
         }
 
         $custom_css = WPGS_Lists::get_custom_css($list_id);
@@ -147,7 +147,7 @@ class WPGS_Renderer {
 
             $html .= '<div class="wpgs-name-col">';
             if ($show_name) {
-                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-server-lists');
+                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-servers-lists');
                 $html .= '<span class="wpgs-server-name">' . esc_html($name_output) . '</span>';
             }
             if ($show_address) {
@@ -215,7 +215,7 @@ class WPGS_Renderer {
 
             $html .= '<div class="wpgs-card-body">';
             if ($show_name) {
-                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-server-lists');
+                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-servers-lists');
                 $html .= '<span class="wpgs-server-name">' . esc_html($name_output) . '</span>';
             }
             if ($show_address) {
@@ -276,7 +276,7 @@ class WPGS_Renderer {
 
             $html .= '<div class="wpgs-card-body">';
             if ($show_name) {
-                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-server-lists');
+                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-servers-lists');
                 $html .= '<span class="wpgs-server-name">' . esc_html($name_output) . '</span>';
             }
             if ($show_address) {
@@ -334,7 +334,7 @@ class WPGS_Renderer {
             $html .= '<div class="wpgs-card">';
             $html .= '<div class="wpgs-card-top">';
             if ($show_name) {
-                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-server-lists');
+                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-servers-lists');
                 $html .= '<span class="wpgs-server-name">' . esc_html($name_output) . '</span>';
             }
 
@@ -349,13 +349,13 @@ class WPGS_Renderer {
 
             $pills = '';
             if ($show_players && $this->has_meaningful_value($players)) {
-                $pills .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Players', 'gamequery-server-lists') . '</span>' . esc_html($players) . '</span>';
+                $pills .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Players', 'gamequery-servers-lists') . '</span>' . esc_html($players) . '</span>';
             }
             if ($show_maxplayers && $this->has_meaningful_value($maxplayers)) {
-                $pills .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Max', 'gamequery-server-lists') . '</span>' . esc_html($maxplayers) . '</span>';
+                $pills .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Max', 'gamequery-servers-lists') . '</span>' . esc_html($maxplayers) . '</span>';
             }
             if ($show_map && $this->has_meaningful_value($map)) {
-                $pills .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Map', 'gamequery-server-lists') . '</span>' . esc_html($map) . '</span>';
+                $pills .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Map', 'gamequery-servers-lists') . '</span>' . esc_html($map) . '</span>';
             }
 
             if ('' !== $pills) {
@@ -412,7 +412,7 @@ class WPGS_Renderer {
 
             $html .= '<div class="wpgs-card-main">';
             if ($show_name) {
-                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-server-lists');
+                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-servers-lists');
                 $html .= '<span class="wpgs-server-name">' . esc_html($name_output) . '</span>';
             }
 
@@ -564,7 +564,7 @@ class WPGS_Renderer {
             $html .= '<div class="wpgs-card-main">';
 
             if ($show_name) {
-                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-server-lists');
+                $name_output = '' !== trim($name) ? $name : __('Unavailable', 'gamequery-servers-lists');
                 $html .= '<span class="wpgs-server-name" title="' . esc_attr($name_output) . '">' . esc_html($name_output) . '</span>';
             }
 
@@ -586,15 +586,15 @@ class WPGS_Renderer {
 
             $meta_html = '';
             if ($show_map && $this->has_meaningful_value($map)) {
-                $meta_html .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Map', 'gamequery-server-lists') . '</span>' . esc_html($map) . '</span>';
+                $meta_html .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Map', 'gamequery-servers-lists') . '</span>' . esc_html($map) . '</span>';
             }
 
             if ($show_players && $this->has_meaningful_value($players)) {
-                $meta_html .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Players', 'gamequery-server-lists') . '</span>' . esc_html($players) . '</span>';
+                $meta_html .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Players', 'gamequery-servers-lists') . '</span>' . esc_html($players) . '</span>';
             }
 
             if ($show_maxplayers && $this->has_meaningful_value($maxplayers)) {
-                $meta_html .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Max', 'gamequery-server-lists') . '</span>' . esc_html($maxplayers) . '</span>';
+                $meta_html .= '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Max', 'gamequery-servers-lists') . '</span>' . esc_html($maxplayers) . '</span>';
             }
 
             if ('' !== $meta_html) {
@@ -623,10 +623,10 @@ class WPGS_Renderer {
         $html = '<span class="wpgs-server-address">' . esc_html($address);
 
         if ($show_copy_button && $this->has_meaningful_value($address)) {
-            $copy_label = __('Copy', 'gamequery-server-lists');
-            $copied_label = __('Copied', 'gamequery-server-lists');
-            $failed_label = __('Failed', 'gamequery-server-lists');
-            $copy_aria_label = __('Copy server IP address', 'gamequery-server-lists');
+            $copy_label = __('Copy', 'gamequery-servers-lists');
+            $copied_label = __('Copied', 'gamequery-servers-lists');
+            $failed_label = __('Failed', 'gamequery-servers-lists');
+            $copy_aria_label = __('Copy server IP address', 'gamequery-servers-lists');
 
             $html .= ' <button type="button" class="wpgs-copy-address" data-copy-address="' . esc_attr($address) . '" data-copy-label="' . esc_attr($copy_label) . '" data-copied-label="' . esc_attr($copied_label) . '" data-failed-label="' . esc_attr($failed_label) . '" aria-label="' . esc_attr($copy_aria_label) . '" title="' . esc_attr($copy_label) . '">' . esc_html($copy_label) . '</button>';
         }
@@ -668,14 +668,14 @@ class WPGS_Renderer {
      */
     private function status_label($status_token) {
         if ('online' === $status_token) {
-            return __('Online', 'gamequery-server-lists');
+            return __('Online', 'gamequery-servers-lists');
         }
 
         if ('offline' === $status_token) {
-            return __('Offline', 'gamequery-server-lists');
+            return __('Offline', 'gamequery-servers-lists');
         }
 
-        return __('Unknown', 'gamequery-server-lists');
+        return __('Unknown', 'gamequery-servers-lists');
     }
 
     /**
@@ -756,32 +756,32 @@ class WPGS_Renderer {
         $available = array(
             'name' => array(
                 'key' => 'name',
-                'label' => __('Name', 'gamequery-server-lists'),
+                'label' => __('Name', 'gamequery-servers-lists'),
                 'enabled' => !empty($display['show_name']),
             ),
             'address' => array(
                 'key' => 'address',
-                'label' => __('Address', 'gamequery-server-lists'),
+                'label' => __('Address', 'gamequery-servers-lists'),
                 'enabled' => !empty($display['show_address']),
             ),
             'map' => array(
                 'key' => 'map',
-                'label' => __('Map', 'gamequery-server-lists'),
+                'label' => __('Map', 'gamequery-servers-lists'),
                 'enabled' => !empty($display['show_map']),
             ),
             'players' => array(
                 'key' => 'players',
-                'label' => __('Players', 'gamequery-server-lists'),
+                'label' => __('Players', 'gamequery-servers-lists'),
                 'enabled' => !empty($display['show_players']),
             ),
             'maxplayers' => array(
                 'key' => 'maxplayers',
-                'label' => __('Max Players', 'gamequery-server-lists'),
+                'label' => __('Max Players', 'gamequery-servers-lists'),
                 'enabled' => !empty($display['show_maxplayers']),
             ),
             'status' => array(
                 'key' => 'status',
-                'label' => __('Status', 'gamequery-server-lists'),
+                'label' => __('Status', 'gamequery-servers-lists'),
                 'enabled' => !empty($display['show_status']),
             ),
         );
@@ -799,7 +799,7 @@ class WPGS_Renderer {
         if (empty($columns)) {
             $columns[] = array(
                 'key' => 'address',
-                'label' => __('Address', 'gamequery-server-lists'),
+                'label' => __('Address', 'gamequery-servers-lists'),
             );
         }
 
@@ -838,7 +838,7 @@ class WPGS_Renderer {
                 }
 
                 $rows[] = array(
-                    'name' => $this->string_value($server_data, 'name', __('Unavailable', 'gamequery-server-lists')),
+                    'name' => $this->string_value($server_data, 'name', __('Unavailable', 'gamequery-servers-lists')),
                     'address' => $server_address,
                     'map' => $this->string_value($server_data, 'map', '-'),
                     'players' => $this->number_value($server_data, 'players'),

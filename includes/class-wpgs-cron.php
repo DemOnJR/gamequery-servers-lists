@@ -38,7 +38,7 @@ class WPGS_Cron {
         $schedules[self::SCHEDULE_KEY] = array(
             'interval' => $interval,
             /* translators: %d is refresh interval in seconds. */
-            'display' => sprintf(__('WPGS every %d seconds', 'gamequery-server-lists'), $interval),
+            'display' => sprintf(__('WPGS every %d seconds', 'gamequery-servers-lists'), $interval),
         );
 
         return $schedules;

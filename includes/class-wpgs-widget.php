@@ -8,10 +8,10 @@ class WPGS_Widget extends WP_Widget {
     public function __construct() {
         parent::__construct(
             'wpgs_server_list',
-            __('GameQuery Servers', 'gamequery-server-lists'),
+            __('GameQuery Servers', 'gamequery-servers-lists'),
             array(
                 'classname' => 'wpgs-server-list-widget',
-                'description' => __('Display a GameQuery server list by selecting a list name or entering a shortcode.', 'gamequery-server-lists'),
+                'description' => __('Display a GameQuery server list by selecting a list name or entering a shortcode.', 'gamequery-servers-lists'),
             )
         );
     }
@@ -78,19 +78,19 @@ class WPGS_Widget extends WP_Widget {
         $shortcode_field_name = $this->get_field_name('shortcode');
 
         echo '<p>';
-        echo '<label for="' . esc_attr($title_field_id) . '">' . esc_html__('Title', 'gamequery-server-lists') . '</label>';
+        echo '<label for="' . esc_attr($title_field_id) . '">' . esc_html__('Title', 'gamequery-servers-lists') . '</label>';
         echo '<input class="widefat" id="' . esc_attr($title_field_id) . '" name="' . esc_attr($title_field_name) . '" type="text" value="' . esc_attr($title) . '" />';
         echo '</p>';
 
         echo '<p>';
-        echo '<label for="' . esc_attr($list_field_id) . '">' . esc_html__('Server List', 'gamequery-server-lists') . '</label>';
+        echo '<label for="' . esc_attr($list_field_id) . '">' . esc_html__('Server List', 'gamequery-servers-lists') . '</label>';
         echo '<select class="widefat" id="' . esc_attr($list_field_id) . '" name="' . esc_attr($list_field_name) . '">';
-        echo '<option value="0">' . esc_html__('Select a list...', 'gamequery-server-lists') . '</option>';
+        echo '<option value="0">' . esc_html__('Select a list...', 'gamequery-servers-lists') . '</option>';
         foreach ($lists as $list_post) {
             $name = '' !== trim((string) $list_post->post_title) ? (string) $list_post->post_title : '';
             if ('' === $name) {
                 /* translators: %d: list post ID. */
-                $name = sprintf(__('List #%d', 'gamequery-server-lists'), absint($list_post->ID));
+                $name = sprintf(__('List #%d', 'gamequery-servers-lists'), absint($list_post->ID));
             }
 
             echo '<option value="' . esc_attr((string) absint($list_post->ID)) . '"' . selected($list_id, absint($list_post->ID), false) . '>' . esc_html($name) . '</option>';
@@ -98,14 +98,14 @@ class WPGS_Widget extends WP_Widget {
         echo '</select>';
         echo '</p>';
 
-        echo '<p class="description">' . esc_html__('Select a published list by name or use a shortcode override below.', 'gamequery-server-lists') . '</p>';
+        echo '<p class="description">' . esc_html__('Select a published list by name or use a shortcode override below.', 'gamequery-servers-lists') . '</p>';
 
         echo '<p>';
-        echo '<label for="' . esc_attr($shortcode_field_id) . '">' . esc_html__('Shortcode Override (optional)', 'gamequery-server-lists') . '</label>';
+        echo '<label for="' . esc_attr($shortcode_field_id) . '">' . esc_html__('Shortcode Override (optional)', 'gamequery-servers-lists') . '</label>';
         echo '<input class="widefat" id="' . esc_attr($shortcode_field_id) . '" name="' . esc_attr($shortcode_field_name) . '" type="text" value="' . esc_attr($shortcode) . '" placeholder="[gamequery_8]" />';
         echo '</p>';
 
-        echo '<p class="description">' . esc_html__('Examples: [gamequery_8], gamequery_8, [gamequery id="8"], or just 8. Shortcode override takes priority.', 'gamequery-server-lists') . '</p>';
+        echo '<p class="description">' . esc_html__('Examples: [gamequery_8], gamequery_8, [gamequery id="8"], or just 8. Shortcode override takes priority.', 'gamequery-servers-lists') . '</p>';
     }
 
     /**

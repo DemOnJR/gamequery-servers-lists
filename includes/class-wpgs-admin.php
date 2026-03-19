@@ -24,8 +24,8 @@ class WPGS_Admin {
 
     public function register_menu() {
         add_menu_page(
-            __('WPGS', 'gamequery-server-lists'),
-            __('WPGS', 'gamequery-server-lists'),
+            __('WPGS', 'gamequery-servers-lists'),
+            __('WPGS', 'gamequery-servers-lists'),
             'manage_options',
             self::LISTS_PAGE_SLUG,
             '',
@@ -35,8 +35,8 @@ class WPGS_Admin {
 
         add_submenu_page(
             self::LISTS_PAGE_SLUG,
-            __('Lists', 'gamequery-server-lists'),
-            __('Lists', 'gamequery-server-lists'),
+            __('Lists', 'gamequery-servers-lists'),
+            __('Lists', 'gamequery-servers-lists'),
             'manage_options',
             self::LISTS_PAGE_SLUG,
             ''
@@ -44,8 +44,8 @@ class WPGS_Admin {
 
         add_submenu_page(
             self::LISTS_PAGE_SLUG,
-            __('Stats', 'gamequery-server-lists'),
-            __('Stats', 'gamequery-server-lists'),
+            __('Stats', 'gamequery-servers-lists'),
+            __('Stats', 'gamequery-servers-lists'),
             'manage_options',
             self::STATS_SLUG,
             array($this, 'render_stats_page')
@@ -53,8 +53,8 @@ class WPGS_Admin {
 
         add_submenu_page(
             self::LISTS_PAGE_SLUG,
-            __('Settings', 'gamequery-server-lists'),
-            __('Settings', 'gamequery-server-lists'),
+            __('Settings', 'gamequery-servers-lists'),
+            __('Settings', 'gamequery-servers-lists'),
             'manage_options',
             self::SETTINGS_SLUG,
             array($this, 'render_settings_page')
@@ -140,12 +140,12 @@ class WPGS_Admin {
                     'pollIntervalMs' => 2000,
                     'reloadDelayMs' => 1200,
                     'messages' => array(
-                        'opening' => __('Opening GameQuery account connection...', 'gamequery-server-lists'),
-                        'waiting' => __('Waiting for your approval in the GameQuery popup...', 'gamequery-server-lists'),
-                        'connected' => __('Connected successfully. Reloading settings...', 'gamequery-server-lists'),
-                        'popupBlocked' => __('Popup blocked by your browser. Please allow popups and try again.', 'gamequery-server-lists'),
-                        'closed' => __('Connection window was closed before completion.', 'gamequery-server-lists'),
-                        'failed' => __('Connection failed. Please try again.', 'gamequery-server-lists'),
+                        'opening' => __('Opening GameQuery account connection...', 'gamequery-servers-lists'),
+                        'waiting' => __('Waiting for your approval in the GameQuery popup...', 'gamequery-servers-lists'),
+                        'connected' => __('Connected successfully. Reloading settings...', 'gamequery-servers-lists'),
+                        'popupBlocked' => __('Popup blocked by your browser. Please allow popups and try again.', 'gamequery-servers-lists'),
+                        'closed' => __('Connection window was closed before completion.', 'gamequery-servers-lists'),
+                        'failed' => __('Connection failed. Please try again.', 'gamequery-servers-lists'),
                     ),
                 )
             ) . ';',
@@ -155,7 +155,7 @@ class WPGS_Admin {
 
     public function handle_save_settings() {
         if (!current_user_can('manage_options')) {
-            wp_die(esc_html__('You do not have permission to perform this action.', 'gamequery-server-lists'));
+            wp_die(esc_html__('You do not have permission to perform this action.', 'gamequery-servers-lists'));
         }
 
         check_admin_referer('wpgs_save_settings', 'wpgs_settings_nonce');
@@ -175,7 +175,7 @@ class WPGS_Admin {
             'wpgs_admin_notice_' . get_current_user_id(),
             array(
                 'type' => 'success',
-                'message' => __('WPGS settings saved.', 'gamequery-server-lists'),
+                'message' => __('WPGS settings saved.', 'gamequery-servers-lists'),
             ),
             60
         );
@@ -201,15 +201,15 @@ class WPGS_Admin {
         $connected_summary = $has_connected_account
             ? sprintf(
                 /* translators: 1: API email, 2: API plan */
-                __('Currently connected as %1$s (%2$s).', 'gamequery-server-lists'),
+                __('Currently connected as %1$s (%2$s).', 'gamequery-servers-lists'),
                 (string) $settings['email'],
                 (string) $settings['plan']
             )
-            : __('No GameQuery account connected yet.', 'gamequery-server-lists');
+            : __('No GameQuery account connected yet.', 'gamequery-servers-lists');
 
         ?>
         <div class="wrap wpgs-admin-page">
-            <h1><?php echo esc_html__('WPGS Settings', 'gamequery-server-lists'); ?></h1>
+            <h1><?php echo esc_html__('WPGS Settings', 'gamequery-servers-lists'); ?></h1>
             <?php $this->render_settings_tabs_nav($active_tab); ?>
 
             <?php if ('logs' === $active_tab) : ?>
@@ -222,43 +222,43 @@ class WPGS_Admin {
 
             <div class="wpgs-settings-summary">
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Published Lists', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Published Lists', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html((string) $list_count); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Configured Servers', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Configured Servers', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($server_count)); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Configured TTL', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Configured TTL', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html((string) WPGS_Settings::get_cache_ttl_setting()); ?>s</span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Effective Cron Interval', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Effective Cron Interval', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html((string) $effective_ttl); ?>s</span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Calls / Refresh', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Calls / Refresh', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($calls_per_cycle)); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Estimated Calls / Day', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Estimated Calls / Day', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n((int) round($daily_calls))); ?></span>
                 </div>
             </div>
 
             <div class="wpgs-connect-panel" id="wpgs-connect-panel">
-                <h2><?php echo esc_html__('Connect GameQuery Account', 'gamequery-server-lists'); ?></h2>
-                <p class="description"><?php echo esc_html__('Use the secure popup flow to select an existing API key without copy/pasting credentials.', 'gamequery-server-lists'); ?></p>
+                <h2><?php echo esc_html__('Connect GameQuery Account', 'gamequery-servers-lists'); ?></h2>
+                <p class="description"><?php echo esc_html__('Use the secure popup flow to select an existing API key without copy/pasting credentials.', 'gamequery-servers-lists'); ?></p>
                 <p class="wpgs-connect-current<?php echo $has_connected_account ? ' is-connected' : ''; ?>"><?php echo esc_html($connected_summary); ?></p>
                 <div class="wpgs-connect-actions">
                     <?php if ($has_connected_account) : ?>
-                        <span class="wpgs-connect-badge" aria-label="<?php echo esc_attr__('Connected to a GameQuery key', 'gamequery-server-lists'); ?>">
+                        <span class="wpgs-connect-badge" aria-label="<?php echo esc_attr__('Connected to a GameQuery key', 'gamequery-servers-lists'); ?>">
                             <span class="dashicons dashicons-yes-alt" aria-hidden="true"></span>
-                            <?php echo esc_html__('Connected', 'gamequery-server-lists'); ?>
+                            <?php echo esc_html__('Connected', 'gamequery-servers-lists'); ?>
                         </span>
                     <?php endif; ?>
-                    <button type="button" class="button button-primary" id="wpgs-connect-button"><?php echo esc_html__('Connect with GameQuery', 'gamequery-server-lists'); ?></button>
+                    <button type="button" class="button button-primary" id="wpgs-connect-button"><?php echo esc_html__('Connect with GameQuery', 'gamequery-servers-lists'); ?></button>
                     <span class="spinner" id="wpgs-connect-spinner" aria-hidden="true"></span>
                 </div>
                 <p id="wpgs-connect-status" class="description" role="status" aria-live="polite"></p>
@@ -271,7 +271,7 @@ class WPGS_Admin {
                 <table class="form-table" role="presentation">
                     <tbody>
                         <tr>
-                            <th scope="row"><label for="wpgs_email"><?php echo esc_html__('API Email', 'gamequery-server-lists'); ?></label></th>
+                            <th scope="row"><label for="wpgs_email"><?php echo esc_html__('API Email', 'gamequery-servers-lists'); ?></label></th>
                             <td>
                                 <input
                                     type="email"
@@ -284,7 +284,7 @@ class WPGS_Admin {
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wpgs_token"><?php echo esc_html__('API Token', 'gamequery-server-lists'); ?></label></th>
+                            <th scope="row"><label for="wpgs_token"><?php echo esc_html__('API Token', 'gamequery-servers-lists'); ?></label></th>
                             <td>
                                 <input
                                     type="password"
@@ -297,14 +297,14 @@ class WPGS_Admin {
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wpgs_plan"><?php echo esc_html__('Plan Type', 'gamequery-server-lists'); ?></label></th>
+                            <th scope="row"><label for="wpgs_plan"><?php echo esc_html__('Plan Type', 'gamequery-servers-lists'); ?></label></th>
                             <td>
                                 <strong id="wpgs_plan"><?php echo esc_html((string) $settings['plan']); ?></strong>
-                                <p class="description"><?php echo esc_html__('Plan is auto-detected from your connected API key and cannot be changed manually. Reconnect if you switch keys.', 'gamequery-server-lists'); ?></p>
+                                <p class="description"><?php echo esc_html__('Plan is auto-detected from your connected API key and cannot be changed manually. Reconnect if you switch keys.', 'gamequery-servers-lists'); ?></p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wpgs_account_base_url"><?php echo esc_html__('Account Base URL', 'gamequery-server-lists'); ?></label></th>
+                            <th scope="row"><label for="wpgs_account_base_url"><?php echo esc_html__('Account Base URL', 'gamequery-servers-lists'); ?></label></th>
                             <td>
                                 <input
                                     type="url"
@@ -314,11 +314,11 @@ class WPGS_Admin {
                                     class="regular-text code"
                                     placeholder="https://gamequery.dev"
                                 />
-                                <p class="description"><?php echo esc_html__('Used by the one-click account connect flow. Leave as default unless support asks you to change it.', 'gamequery-server-lists'); ?></p>
+                                <p class="description"><?php echo esc_html__('Used by the one-click account connect flow. Leave as default unless support asks you to change it.', 'gamequery-servers-lists'); ?></p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wpgs_api_base_url"><?php echo esc_html__('API Base URL', 'gamequery-server-lists'); ?></label></th>
+                            <th scope="row"><label for="wpgs_api_base_url"><?php echo esc_html__('API Base URL', 'gamequery-servers-lists'); ?></label></th>
                             <td>
                                 <input
                                     type="url"
@@ -328,11 +328,11 @@ class WPGS_Admin {
                                     class="regular-text code"
                                     placeholder="https://api.gamequery.dev/v1"
                                 />
-                                <p class="description"><?php echo esc_html__('The plugin calls POST /post/fetch against this base URL.', 'gamequery-server-lists'); ?></p>
+                                <p class="description"><?php echo esc_html__('The plugin calls POST /post/fetch against this base URL.', 'gamequery-servers-lists'); ?></p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wpgs_cache_ttl"><?php echo esc_html__('Cache TTL (seconds)', 'gamequery-server-lists'); ?></label></th>
+                            <th scope="row"><label for="wpgs_cache_ttl"><?php echo esc_html__('Cache TTL (seconds)', 'gamequery-servers-lists'); ?></label></th>
                             <td>
                                 <input
                                     type="number"
@@ -343,28 +343,28 @@ class WPGS_Admin {
                                     value="<?php echo esc_attr((string) $settings['cache_ttl']); ?>"
                                     class="small-text"
                                 />
-                                <p class="description"><?php echo esc_html__('Used for transient expiry and cron refresh interval. FREE plan uses a minimum effective interval of 60 seconds.', 'gamequery-server-lists'); ?></p>
+                                <p class="description"><?php echo esc_html__('Used for transient expiry and cron refresh interval. FREE plan uses a minimum effective interval of 60 seconds.', 'gamequery-servers-lists'); ?></p>
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <?php submit_button(__('Save Settings', 'gamequery-server-lists')); ?>
+                <?php submit_button(__('Save Settings', 'gamequery-servers-lists')); ?>
             </form>
 
             <?php if (!empty($last_error)) : ?>
                 <div class="wpgs-last-error">
-                    <h2><?php echo esc_html__('Last API Error', 'gamequery-server-lists'); ?></h2>
-                    <p><strong><?php echo esc_html__('Code:', 'gamequery-server-lists'); ?></strong> <code><?php echo esc_html((string) $last_error['error_code']); ?></code></p>
-                    <p><strong><?php echo esc_html__('Message:', 'gamequery-server-lists'); ?></strong> <?php echo esc_html((string) $last_error['error_message']); ?></p>
+                    <h2><?php echo esc_html__('Last API Error', 'gamequery-servers-lists'); ?></h2>
+                    <p><strong><?php echo esc_html__('Code:', 'gamequery-servers-lists'); ?></strong> <code><?php echo esc_html((string) $last_error['error_code']); ?></code></p>
+                    <p><strong><?php echo esc_html__('Message:', 'gamequery-servers-lists'); ?></strong> <?php echo esc_html((string) $last_error['error_message']); ?></p>
                     <?php if (!empty($last_error['status_code'])) : ?>
-                        <p><strong><?php echo esc_html__('HTTP Status:', 'gamequery-server-lists'); ?></strong> <?php echo esc_html((string) $last_error['status_code']); ?></p>
+                        <p><strong><?php echo esc_html__('HTTP Status:', 'gamequery-servers-lists'); ?></strong> <?php echo esc_html((string) $last_error['status_code']); ?></p>
                     <?php endif; ?>
                     <?php if (!empty($last_error['list_id'])) : ?>
-                        <p><strong><?php echo esc_html__('List ID:', 'gamequery-server-lists'); ?></strong> <?php echo esc_html((string) $last_error['list_id']); ?></p>
+                        <p><strong><?php echo esc_html__('List ID:', 'gamequery-servers-lists'); ?></strong> <?php echo esc_html((string) $last_error['list_id']); ?></p>
                     <?php endif; ?>
                     <?php if (!empty($last_error['occurred_at'])) : ?>
-                        <p><strong><?php echo esc_html__('Occurred At (UTC):', 'gamequery-server-lists'); ?></strong> <?php echo esc_html((string) $last_error['occurred_at']); ?></p>
+                        <p><strong><?php echo esc_html__('Occurred At (UTC):', 'gamequery-servers-lists'); ?></strong> <?php echo esc_html((string) $last_error['occurred_at']); ?></p>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -389,8 +389,8 @@ class WPGS_Admin {
         $active_tab = 'logs' === $active_tab ? 'logs' : 'general';
 
         $tabs = array(
-            'general' => __('Settings', 'gamequery-server-lists'),
-            'logs' => __('Logs', 'gamequery-server-lists'),
+            'general' => __('Settings', 'gamequery-servers-lists'),
+            'logs' => __('Logs', 'gamequery-servers-lists'),
         );
 
         echo '<nav class="nav-tab-wrapper wpgs-nav-tabs">';
@@ -444,27 +444,27 @@ class WPGS_Admin {
         }
 
         ?>
-        <p class="description wpgs-log-note"><?php echo esc_html__('This tab shows only the last 24 hours of cron refresh activity. Older log entries are automatically removed.', 'gamequery-server-lists'); ?></p>
+        <p class="description wpgs-log-note"><?php echo esc_html__('This tab shows only the last 24 hours of cron refresh activity. Older log entries are automatically removed.', 'gamequery-servers-lists'); ?></p>
 
         <div class="wpgs-settings-summary">
             <div class="wpgs-summary-item">
-                <strong><?php echo esc_html__('Runs (24h)', 'gamequery-server-lists'); ?></strong>
+                <strong><?php echo esc_html__('Runs (24h)', 'gamequery-servers-lists'); ?></strong>
                 <span><?php echo esc_html(number_format_i18n((int) $summary['total'])); ?></span>
             </div>
             <div class="wpgs-summary-item">
-                <strong><?php echo esc_html__('Successful', 'gamequery-server-lists'); ?></strong>
+                <strong><?php echo esc_html__('Successful', 'gamequery-servers-lists'); ?></strong>
                 <span><?php echo esc_html(number_format_i18n((int) $summary['success'])); ?></span>
             </div>
             <div class="wpgs-summary-item">
-                <strong><?php echo esc_html__('With Errors', 'gamequery-server-lists'); ?></strong>
+                <strong><?php echo esc_html__('With Errors', 'gamequery-servers-lists'); ?></strong>
                 <span><?php echo esc_html(number_format_i18n((int) $summary['error'] + (int) $summary['partial'])); ?></span>
             </div>
             <div class="wpgs-summary-item">
-                <strong><?php echo esc_html__('API Calls (24h)', 'gamequery-server-lists'); ?></strong>
+                <strong><?php echo esc_html__('API Calls (24h)', 'gamequery-servers-lists'); ?></strong>
                 <span><?php echo esc_html(number_format_i18n((int) $summary['api_calls'])); ?></span>
             </div>
             <div class="wpgs-summary-item">
-                <strong><?php echo esc_html__('Last Run (UTC)', 'gamequery-server-lists'); ?></strong>
+                <strong><?php echo esc_html__('Last Run (UTC)', 'gamequery-servers-lists'); ?></strong>
                 <span class="wpgs-summary-text"><?php echo '' !== $summary['last_run'] ? esc_html($summary['last_run']) : '—'; ?></span>
             </div>
         </div>
@@ -472,20 +472,20 @@ class WPGS_Admin {
         <table class="widefat striped wpgs-log-table">
             <thead>
                 <tr>
-                    <th><?php echo esc_html__('Time (UTC)', 'gamequery-server-lists'); ?></th>
-                    <th><?php echo esc_html__('Status', 'gamequery-server-lists'); ?></th>
-                    <th><?php echo esc_html__('API Calls', 'gamequery-server-lists'); ?></th>
-                    <th><?php echo esc_html__('Lists', 'gamequery-server-lists'); ?></th>
-                    <th><?php echo esc_html__('Servers', 'gamequery-server-lists'); ?></th>
-                    <th><?php echo esc_html__('Chunks', 'gamequery-server-lists'); ?></th>
-                    <th><?php echo esc_html__('Duration', 'gamequery-server-lists'); ?></th>
-                    <th><?php echo esc_html__('Message', 'gamequery-server-lists'); ?></th>
+                    <th><?php echo esc_html__('Time (UTC)', 'gamequery-servers-lists'); ?></th>
+                    <th><?php echo esc_html__('Status', 'gamequery-servers-lists'); ?></th>
+                    <th><?php echo esc_html__('API Calls', 'gamequery-servers-lists'); ?></th>
+                    <th><?php echo esc_html__('Lists', 'gamequery-servers-lists'); ?></th>
+                    <th><?php echo esc_html__('Servers', 'gamequery-servers-lists'); ?></th>
+                    <th><?php echo esc_html__('Chunks', 'gamequery-servers-lists'); ?></th>
+                    <th><?php echo esc_html__('Duration', 'gamequery-servers-lists'); ?></th>
+                    <th><?php echo esc_html__('Message', 'gamequery-servers-lists'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($logs)) : ?>
                     <tr>
-                        <td colspan="8"><?php echo esc_html__('No cron logs in the last 24 hours yet.', 'gamequery-server-lists'); ?></td>
+                        <td colspan="8"><?php echo esc_html__('No cron logs in the last 24 hours yet.', 'gamequery-servers-lists'); ?></td>
                     </tr>
                 <?php else : ?>
                     <?php foreach ($logs as $log) : ?>
@@ -533,18 +533,18 @@ class WPGS_Admin {
      */
     private function cron_log_status_label($status) {
         if ('success' === $status) {
-            return __('Success', 'gamequery-server-lists');
+            return __('Success', 'gamequery-servers-lists');
         }
 
         if ('partial' === $status) {
-            return __('Partial', 'gamequery-server-lists');
+            return __('Partial', 'gamequery-servers-lists');
         }
 
         if ('error' === $status) {
-            return __('Error', 'gamequery-server-lists');
+            return __('Error', 'gamequery-servers-lists');
         }
 
-        return __('No-op', 'gamequery-server-lists');
+        return __('No-op', 'gamequery-servers-lists');
     }
 
     public function handle_stats_export() {
@@ -619,51 +619,51 @@ class WPGS_Admin {
         $reset_url = $this->get_stats_page_url();
         ?>
         <div class="wrap wpgs-admin-page">
-            <h1><?php echo esc_html__('WPGS Stats', 'gamequery-server-lists'); ?></h1>
+            <h1><?php echo esc_html__('WPGS Stats', 'gamequery-servers-lists'); ?></h1>
 
             <form method="get" action="<?php echo esc_url(admin_url('edit.php')); ?>" class="wpgs-stats-filter-toolbar">
                 <input type="hidden" name="post_type" value="<?php echo esc_attr(WPGS_Lists::POST_TYPE); ?>" />
                 <input type="hidden" name="page" value="<?php echo esc_attr(self::STATS_SLUG); ?>" />
 
-                <label for="wpgs_stats_status_filter" class="screen-reader-text"><?php echo esc_html__('Filter by status', 'gamequery-server-lists'); ?></label>
+                <label for="wpgs_stats_status_filter" class="screen-reader-text"><?php echo esc_html__('Filter by status', 'gamequery-servers-lists'); ?></label>
                 <select id="wpgs_stats_status_filter" name="wpgs_status">
-                    <option value="all" <?php selected('all', $status_filter); ?>><?php echo esc_html__('All statuses', 'gamequery-server-lists'); ?></option>
-                    <option value="publish" <?php selected('publish', $status_filter); ?>><?php echo esc_html__('Published', 'gamequery-server-lists'); ?></option>
-                    <option value="draft" <?php selected('draft', $status_filter); ?>><?php echo esc_html__('Draft', 'gamequery-server-lists'); ?></option>
-                    <option value="pending" <?php selected('pending', $status_filter); ?>><?php echo esc_html__('Pending', 'gamequery-server-lists'); ?></option>
-                    <option value="private" <?php selected('private', $status_filter); ?>><?php echo esc_html__('Private', 'gamequery-server-lists'); ?></option>
+                    <option value="all" <?php selected('all', $status_filter); ?>><?php echo esc_html__('All statuses', 'gamequery-servers-lists'); ?></option>
+                    <option value="publish" <?php selected('publish', $status_filter); ?>><?php echo esc_html__('Published', 'gamequery-servers-lists'); ?></option>
+                    <option value="draft" <?php selected('draft', $status_filter); ?>><?php echo esc_html__('Draft', 'gamequery-servers-lists'); ?></option>
+                    <option value="pending" <?php selected('pending', $status_filter); ?>><?php echo esc_html__('Pending', 'gamequery-servers-lists'); ?></option>
+                    <option value="private" <?php selected('private', $status_filter); ?>><?php echo esc_html__('Private', 'gamequery-servers-lists'); ?></option>
                 </select>
 
-                <label for="wpgs_stats_search" class="screen-reader-text"><?php echo esc_html__('Search lists', 'gamequery-server-lists'); ?></label>
+                <label for="wpgs_stats_search" class="screen-reader-text"><?php echo esc_html__('Search lists', 'gamequery-servers-lists'); ?></label>
                 <input
                     type="search"
                     id="wpgs_stats_search"
                     name="s"
                     value="<?php echo esc_attr($search_query); ?>"
-                    placeholder="<?php echo esc_attr__('Search lists...', 'gamequery-server-lists'); ?>"
+                    placeholder="<?php echo esc_attr__('Search lists...', 'gamequery-servers-lists'); ?>"
                 />
 
-                <button type="submit" class="button"><?php echo esc_html__('Filter', 'gamequery-server-lists'); ?></button>
+                <button type="submit" class="button"><?php echo esc_html__('Filter', 'gamequery-servers-lists'); ?></button>
                 <?php if ($has_filters) : ?>
-                    <a class="button button-secondary" href="<?php echo esc_url($reset_url); ?>"><?php echo esc_html__('Reset', 'gamequery-server-lists'); ?></a>
+                    <a class="button button-secondary" href="<?php echo esc_url($reset_url); ?>"><?php echo esc_html__('Reset', 'gamequery-servers-lists'); ?></a>
                 <?php endif; ?>
             </form>
 
             <div class="wpgs-settings-summary">
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Total Views', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Total Views', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($totals['views_total'])); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Unique Views', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Unique Views', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($totals['views_unique'])); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Total Clicks', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Total Clicks', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($totals['clicks_total'])); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('CTR', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('CTR', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($ctr_total, 2)); ?>%</span>
                 </div>
             </div>
@@ -675,27 +675,27 @@ class WPGS_Admin {
                 <input type="hidden" name="s" value="<?php echo esc_attr($search_query); ?>" />
 
                 <div class="wpgs-stats-bulk-actions">
-                    <label class="screen-reader-text" for="wpgs_bulk_action"><?php echo esc_html__('Select bulk action', 'gamequery-server-lists'); ?></label>
+                    <label class="screen-reader-text" for="wpgs_bulk_action"><?php echo esc_html__('Select bulk action', 'gamequery-servers-lists'); ?></label>
                     <select id="wpgs_bulk_action" name="wpgs_bulk_action">
-                        <option value=""><?php echo esc_html__('Bulk actions', 'gamequery-server-lists'); ?></option>
-                        <option value="trash"><?php echo esc_html__('Move to Trash', 'gamequery-server-lists'); ?></option>
+                        <option value=""><?php echo esc_html__('Bulk actions', 'gamequery-servers-lists'); ?></option>
+                        <option value="trash"><?php echo esc_html__('Move to Trash', 'gamequery-servers-lists'); ?></option>
                     </select>
-                    <button type="submit" class="button action"><?php echo esc_html__('Apply', 'gamequery-server-lists'); ?></button>
+                    <button type="submit" class="button action"><?php echo esc_html__('Apply', 'gamequery-servers-lists'); ?></button>
                 </div>
 
                 <table class="widefat striped">
                     <thead>
                         <tr>
                             <td class="manage-column check-column"><input type="checkbox" id="wpgs-stats-select-all" /></td>
-                            <th><?php echo esc_html__('List', 'gamequery-server-lists'); ?></th>
-                            <th><?php echo esc_html__('Shortcode', 'gamequery-server-lists'); ?></th>
-                            <th><?php echo esc_html__('Views', 'gamequery-server-lists'); ?></th>
-                            <th><?php echo esc_html__('Unique Views', 'gamequery-server-lists'); ?></th>
-                            <th><?php echo esc_html__('Clicks', 'gamequery-server-lists'); ?></th>
-                            <th><?php echo esc_html__('Unique Clicks', 'gamequery-server-lists'); ?></th>
-                            <th><?php echo esc_html__('CTR', 'gamequery-server-lists'); ?></th>
-                            <th><?php echo esc_html__('Last Event (UTC)', 'gamequery-server-lists'); ?></th>
-                            <th><?php echo esc_html__('Actions', 'gamequery-server-lists'); ?></th>
+                            <th><?php echo esc_html__('List', 'gamequery-servers-lists'); ?></th>
+                            <th><?php echo esc_html__('Shortcode', 'gamequery-servers-lists'); ?></th>
+                            <th><?php echo esc_html__('Views', 'gamequery-servers-lists'); ?></th>
+                            <th><?php echo esc_html__('Unique Views', 'gamequery-servers-lists'); ?></th>
+                            <th><?php echo esc_html__('Clicks', 'gamequery-servers-lists'); ?></th>
+                            <th><?php echo esc_html__('Unique Clicks', 'gamequery-servers-lists'); ?></th>
+                            <th><?php echo esc_html__('CTR', 'gamequery-servers-lists'); ?></th>
+                            <th><?php echo esc_html__('Last Event (UTC)', 'gamequery-servers-lists'); ?></th>
+                            <th><?php echo esc_html__('Actions', 'gamequery-servers-lists'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -703,9 +703,9 @@ class WPGS_Admin {
                             <tr>
                                 <td colspan="10">
                                     <?php if ($has_filters) : ?>
-                                        <?php echo esc_html__('No lists matched your current filters.', 'gamequery-server-lists'); ?>
+                                        <?php echo esc_html__('No lists matched your current filters.', 'gamequery-servers-lists'); ?>
                                     <?php else : ?>
-                                        <?php echo esc_html__('No lists found yet.', 'gamequery-server-lists'); ?>
+                                        <?php echo esc_html__('No lists found yet.', 'gamequery-servers-lists'); ?>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -717,12 +717,12 @@ class WPGS_Admin {
                                         <input type="checkbox" class="wpgs-stats-row-checkbox" name="wpgs_list_ids[]" value="<?php echo esc_attr((string) $row['id']); ?>" />
                                     </th>
                                     <td>
-                                        <?php $title = '' !== trim((string) $row['title']) ? (string) $row['title'] : __('(no title)', 'gamequery-server-lists'); ?>
+                                        <?php $title = '' !== trim((string) $row['title']) ? (string) $row['title'] : __('(no title)', 'gamequery-servers-lists'); ?>
                                         <a href="<?php echo esc_url((string) $row['stats_url']); ?>"><?php echo esc_html($title); ?></a>
                                         <div class="wpgs-stats-secondary">
                                             <?php
                                             /* translators: %s: list post status label. */
-                                            $status_label = sprintf(__('Status: %s', 'gamequery-server-lists'), strtoupper((string) $row['post_status']));
+                                            $status_label = sprintf(__('Status: %s', 'gamequery-servers-lists'), strtoupper((string) $row['post_status']));
                                             echo esc_html($status_label);
                                             ?>
                                         </div>
@@ -736,12 +736,12 @@ class WPGS_Admin {
                                     <td><?php echo '' !== (string) $row['last_event'] ? esc_html((string) $row['last_event']) : '—'; ?></td>
                                     <td>
                                         <div class="wpgs-stats-row-actions">
-                                            <a class="button button-small" href="<?php echo esc_url((string) $row['stats_url']); ?>"><?php echo esc_html__('Open report', 'gamequery-server-lists'); ?></a>
+                                            <a class="button button-small" href="<?php echo esc_url((string) $row['stats_url']); ?>"><?php echo esc_html__('Open report', 'gamequery-servers-lists'); ?></a>
                                             <?php if (!empty($row['edit_url'])) : ?>
-                                                <a class="button button-small" href="<?php echo esc_url((string) $row['edit_url']); ?>"><?php echo esc_html__('Edit', 'gamequery-server-lists'); ?></a>
+                                                <a class="button button-small" href="<?php echo esc_url((string) $row['edit_url']); ?>"><?php echo esc_html__('Edit', 'gamequery-servers-lists'); ?></a>
                                             <?php endif; ?>
                                             <?php if (!empty($row['trash_url'])) : ?>
-                                                <a class="button button-small wpgs-button-danger" href="<?php echo esc_url((string) $row['trash_url']); ?>"><?php echo esc_html__('Trash', 'gamequery-server-lists'); ?></a>
+                                                <a class="button button-small wpgs-button-danger" href="<?php echo esc_url((string) $row['trash_url']); ?>"><?php echo esc_html__('Trash', 'gamequery-servers-lists'); ?></a>
                                             <?php endif; ?>
                                         </div>
                                     </td>
@@ -847,15 +847,15 @@ class WPGS_Admin {
             $nonce = isset($_REQUEST['_wpnonce']) ? sanitize_text_field((string) wp_unslash($_REQUEST['_wpnonce'])) : '';
 
             if ($list_id <= 0 || !wp_verify_nonce($nonce, 'wpgs_stats_trash_' . $list_id)) {
-                $this->set_admin_notice('error', __('Invalid trash request.', 'gamequery-server-lists'));
+                $this->set_admin_notice('error', __('Invalid trash request.', 'gamequery-servers-lists'));
                 wp_safe_redirect($this->get_stats_page_url(0, $redirect_args));
                 exit;
             }
 
             if ($this->trash_stats_list($list_id)) {
-                $this->set_admin_notice('success', __('List moved to Trash.', 'gamequery-server-lists'));
+                $this->set_admin_notice('success', __('List moved to Trash.', 'gamequery-servers-lists'));
             } else {
-                $this->set_admin_notice('error', __('List could not be moved to Trash.', 'gamequery-server-lists'));
+                $this->set_admin_notice('error', __('List could not be moved to Trash.', 'gamequery-servers-lists'));
             }
 
             wp_safe_redirect($this->get_stats_page_url(0, $redirect_args));
@@ -865,14 +865,14 @@ class WPGS_Admin {
         if ('bulk_apply' === $action) {
             $bulk_nonce = isset($_POST['wpgs_stats_bulk_nonce']) ? sanitize_text_field((string) wp_unslash($_POST['wpgs_stats_bulk_nonce'])) : '';
             if (!wp_verify_nonce($bulk_nonce, 'wpgs_stats_bulk')) {
-                $this->set_admin_notice('error', __('Invalid bulk action request.', 'gamequery-server-lists'));
+                $this->set_admin_notice('error', __('Invalid bulk action request.', 'gamequery-servers-lists'));
                 wp_safe_redirect($this->get_stats_page_url(0, $redirect_args));
                 exit;
             }
 
             $bulk_action = isset($_POST['wpgs_bulk_action']) ? sanitize_key((string) wp_unslash($_POST['wpgs_bulk_action'])) : '';
             if ('trash' !== $bulk_action) {
-                $this->set_admin_notice('warning', __('No bulk action was selected.', 'gamequery-server-lists'));
+                $this->set_admin_notice('warning', __('No bulk action was selected.', 'gamequery-servers-lists'));
                 wp_safe_redirect($this->get_stats_page_url(0, $redirect_args));
                 exit;
             }
@@ -888,7 +888,7 @@ class WPGS_Admin {
             }
 
             if (empty($list_ids)) {
-                $this->set_admin_notice('warning', __('No lists were selected.', 'gamequery-server-lists'));
+                $this->set_admin_notice('warning', __('No lists were selected.', 'gamequery-servers-lists'));
                 wp_safe_redirect($this->get_stats_page_url(0, $redirect_args));
                 exit;
             }
@@ -903,12 +903,12 @@ class WPGS_Admin {
             if ($trashed_count > 0) {
                 $message = sprintf(
                     /* translators: %d: trashed list count */
-                    _n('Moved %d list to Trash.', 'Moved %d lists to Trash.', $trashed_count, 'gamequery-server-lists'),
+                    _n('Moved %d list to Trash.', 'Moved %d lists to Trash.', $trashed_count, 'gamequery-servers-lists'),
                     $trashed_count
                 );
                 $this->set_admin_notice('success', $message);
             } else {
-                $this->set_admin_notice('error', __('Selected lists could not be moved to Trash.', 'gamequery-server-lists'));
+                $this->set_admin_notice('error', __('Selected lists could not be moved to Trash.', 'gamequery-servers-lists'));
             }
 
             wp_safe_redirect($this->get_stats_page_url(0, $redirect_args));
@@ -1028,16 +1028,16 @@ class WPGS_Admin {
         if (empty($row)) {
             ?>
             <div class="wrap wpgs-admin-page">
-                <h1><?php echo esc_html__('WPGS Stats', 'gamequery-server-lists'); ?></h1>
-                <p><?php echo esc_html__('That list report could not be found.', 'gamequery-server-lists'); ?></p>
-                <p><a class="button" href="<?php echo esc_url($back_url); ?>"><?php echo esc_html__('Back to all stats', 'gamequery-server-lists'); ?></a></p>
+                <h1><?php echo esc_html__('WPGS Stats', 'gamequery-servers-lists'); ?></h1>
+                <p><?php echo esc_html__('That list report could not be found.', 'gamequery-servers-lists'); ?></p>
+                <p><a class="button" href="<?php echo esc_url($back_url); ?>"><?php echo esc_html__('Back to all stats', 'gamequery-servers-lists'); ?></a></p>
             </div>
             <?php
             return;
         }
 
         $list_id = (int) $row['id'];
-        $title = '' !== trim((string) $row['title']) ? (string) $row['title'] : __('(no title)', 'gamequery-server-lists');
+        $title = '' !== trim((string) $row['title']) ? (string) $row['title'] : __('(no title)', 'gamequery-servers-lists');
         $views_total = (int) $row['views_total'];
         $views_unique = (int) $row['views_unique'];
         $clicks_total = (int) $row['clicks_total'];
@@ -1063,51 +1063,51 @@ class WPGS_Admin {
                     <p class="description"><code>[gamequery_<?php echo esc_html((string) $list_id); ?>]</code></p>
                 </div>
                 <div class="wpgs-stats-toolbar-actions">
-                    <a class="button" href="<?php echo esc_url($back_url); ?>"><?php echo esc_html__('Back to all stats', 'gamequery-server-lists'); ?></a>
+                    <a class="button" href="<?php echo esc_url($back_url); ?>"><?php echo esc_html__('Back to all stats', 'gamequery-servers-lists'); ?></a>
                     <?php if (!empty($row['edit_url'])) : ?>
-                        <a class="button" href="<?php echo esc_url((string) $row['edit_url']); ?>"><?php echo esc_html__('Edit list', 'gamequery-server-lists'); ?></a>
+                        <a class="button" href="<?php echo esc_url((string) $row['edit_url']); ?>"><?php echo esc_html__('Edit list', 'gamequery-servers-lists'); ?></a>
                     <?php endif; ?>
-                    <a class="button button-secondary" href="<?php echo esc_url($csv_url); ?>"><?php echo esc_html__('Download CSV', 'gamequery-server-lists'); ?></a>
-                    <a class="button button-secondary" href="<?php echo esc_url($pdf_url); ?>"><?php echo esc_html__('Download PDF', 'gamequery-server-lists'); ?></a>
+                    <a class="button button-secondary" href="<?php echo esc_url($csv_url); ?>"><?php echo esc_html__('Download CSV', 'gamequery-servers-lists'); ?></a>
+                    <a class="button button-secondary" href="<?php echo esc_url($pdf_url); ?>"><?php echo esc_html__('Download PDF', 'gamequery-servers-lists'); ?></a>
                 </div>
             </div>
 
             <div class="wpgs-settings-summary">
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Total Views', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Total Views', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($views_total)); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Unique Views', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Unique Views', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($views_unique)); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Total Clicks', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Total Clicks', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($clicks_total)); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('Unique Clicks', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('Unique Clicks', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($clicks_unique)); ?></span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('CTR (Total)', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('CTR (Total)', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($ctr_total, 2)); ?>%</span>
                 </div>
                 <div class="wpgs-summary-item">
-                    <strong><?php echo esc_html__('CTR (Unique)', 'gamequery-server-lists'); ?></strong>
+                    <strong><?php echo esc_html__('CTR (Unique)', 'gamequery-servers-lists'); ?></strong>
                     <span><?php echo esc_html(number_format_i18n($ctr_unique, 2)); ?>%</span>
                 </div>
             </div>
 
             <div class="wpgs-stats-graphs">
                 <div class="wpgs-stats-graph-card">
-                    <h2><?php echo esc_html__('Audience Quality', 'gamequery-server-lists'); ?></h2>
+                    <h2><?php echo esc_html__('Audience Quality', 'gamequery-servers-lists'); ?></h2>
                     <?php
                     $views_ratio_hint = number_format_i18n($views_unique) . ' / ' . number_format_i18n($views_total);
                     $unique_clicks_hint = number_format_i18n($clicks_unique) . ' / ' . number_format_i18n($clicks_total);
 
                     $views_ratio_bar = $this->render_stats_progress_bar(
-                        __('Unique Views Ratio', 'gamequery-server-lists'),
+                        __('Unique Views Ratio', 'gamequery-servers-lists'),
                         $views_unique,
                         $views_total,
                         '#0f4b81',
@@ -1115,7 +1115,7 @@ class WPGS_Admin {
                     );
 
                     $unique_clicks_bar = $this->render_stats_progress_bar(
-                        __('Unique Clicks Ratio', 'gamequery-server-lists'),
+                        __('Unique Clicks Ratio', 'gamequery-servers-lists'),
                         $clicks_unique,
                         $clicks_total,
                         '#1f7c41',
@@ -1129,13 +1129,13 @@ class WPGS_Admin {
                     ?>
                 </div>
                 <div class="wpgs-stats-graph-card">
-                    <h2><?php echo esc_html__('Conversion Snapshot', 'gamequery-server-lists'); ?></h2>
+                    <h2><?php echo esc_html__('Conversion Snapshot', 'gamequery-servers-lists'); ?></h2>
                     <?php
                     $total_ctr_hint = number_format_i18n($clicks_total) . ' / ' . number_format_i18n($views_total);
                     $unique_ctr_hint = number_format_i18n($clicks_unique) . ' / ' . number_format_i18n($views_unique);
 
                     $total_ctr_bar = $this->render_stats_progress_bar(
-                        __('Click-through Rate (Total)', 'gamequery-server-lists'),
+                        __('Click-through Rate (Total)', 'gamequery-servers-lists'),
                         $clicks_total,
                         $views_total,
                         '#8a4b00',
@@ -1143,7 +1143,7 @@ class WPGS_Admin {
                     );
 
                     $unique_ctr_bar = $this->render_stats_progress_bar(
-                        __('Click-through Rate (Unique)', 'gamequery-server-lists'),
+                        __('Click-through Rate (Unique)', 'gamequery-servers-lists'),
                         $clicks_unique,
                         $views_unique,
                         '#6d28d9',
@@ -1161,19 +1161,19 @@ class WPGS_Admin {
             <table class="widefat striped wpgs-stats-detail-table">
                 <tbody>
                     <tr>
-                        <th><?php echo esc_html__('List ID', 'gamequery-server-lists'); ?></th>
+                        <th><?php echo esc_html__('List ID', 'gamequery-servers-lists'); ?></th>
                         <td><?php echo esc_html((string) $list_id); ?></td>
                     </tr>
                     <tr>
-                        <th><?php echo esc_html__('Groups', 'gamequery-server-lists'); ?></th>
+                        <th><?php echo esc_html__('Groups', 'gamequery-servers-lists'); ?></th>
                         <td><?php echo esc_html(number_format_i18n((int) $row['group_count'])); ?></td>
                     </tr>
                     <tr>
-                        <th><?php echo esc_html__('Servers', 'gamequery-server-lists'); ?></th>
+                        <th><?php echo esc_html__('Servers', 'gamequery-servers-lists'); ?></th>
                         <td><?php echo esc_html(number_format_i18n((int) $row['server_count'])); ?></td>
                     </tr>
                     <tr>
-                        <th><?php echo esc_html__('Last Event (UTC)', 'gamequery-server-lists'); ?></th>
+                        <th><?php echo esc_html__('Last Event (UTC)', 'gamequery-servers-lists'); ?></th>
                         <td><?php echo '' !== (string) $row['last_event'] ? esc_html((string) $row['last_event']) : '—'; ?></td>
                     </tr>
                 </tbody>
@@ -1198,16 +1198,16 @@ class WPGS_Admin {
 
         $list_id = absint($list_id);
         if ($list_id <= 0) {
-            wp_die(esc_html__('The selected report could not be found.', 'gamequery-server-lists'));
+            wp_die(esc_html__('The selected report could not be found.', 'gamequery-servers-lists'));
         }
 
         $row = $this->find_stats_row($rows, $list_id);
         if (empty($row)) {
-            wp_die(esc_html__('The selected report could not be found.', 'gamequery-server-lists'));
+            wp_die(esc_html__('The selected report could not be found.', 'gamequery-servers-lists'));
         }
 
         if (!wp_verify_nonce($nonce, 'wpgs_stats_export_' . $list_id)) {
-            wp_die(esc_html__('Invalid export request.', 'gamequery-server-lists'));
+            wp_die(esc_html__('Invalid export request.', 'gamequery-servers-lists'));
         }
 
         if ('csv' === $format) {
@@ -1220,7 +1220,7 @@ class WPGS_Admin {
             return;
         }
 
-        wp_die(esc_html__('Unsupported export format.', 'gamequery-server-lists'));
+        wp_die(esc_html__('Unsupported export format.', 'gamequery-servers-lists'));
     }
 
     /**
@@ -1237,7 +1237,7 @@ class WPGS_Admin {
 
         $output = fopen('php://output', 'w');
         if (false !== $output) {
-            fputcsv($output, array(__('Metric', 'gamequery-server-lists'), __('Value', 'gamequery-server-lists')));
+            fputcsv($output, array(__('Metric', 'gamequery-servers-lists'), __('Value', 'gamequery-servers-lists')));
             foreach ($lines as $line) {
                 if (!is_array($line)) {
                     continue;
@@ -1271,7 +1271,7 @@ class WPGS_Admin {
             $pdf_lines[] = $label . ': ' . $value;
         }
 
-        $pdf = $this->build_simple_pdf_document(__('WPGS Stats Report', 'gamequery-server-lists'), $pdf_lines);
+        $pdf = $this->build_simple_pdf_document(__('WPGS Stats Report', 'gamequery-servers-lists'), $pdf_lines);
 
         nocache_headers();
         header('Content-Type: application/pdf');
@@ -1291,7 +1291,7 @@ class WPGS_Admin {
         $list_id = isset($row['id']) ? absint($row['id']) : 0;
         $title = isset($row['title']) && '' !== trim((string) $row['title'])
             ? (string) $row['title']
-            : __('(no title)', 'gamequery-server-lists');
+            : __('(no title)', 'gamequery-servers-lists');
 
         $views_total = isset($row['views_total']) ? (int) $row['views_total'] : 0;
         $views_unique = isset($row['views_unique']) ? (int) $row['views_unique'] : 0;
@@ -1300,55 +1300,55 @@ class WPGS_Admin {
 
         return array(
             array(
-                'label' => __('Generated At (UTC)', 'gamequery-server-lists'),
+                'label' => __('Generated At (UTC)', 'gamequery-servers-lists'),
                 'value' => current_time('mysql', true),
             ),
             array(
-                'label' => __('List ID', 'gamequery-server-lists'),
+                'label' => __('List ID', 'gamequery-servers-lists'),
                 'value' => (string) $list_id,
             ),
             array(
-                'label' => __('List Title', 'gamequery-server-lists'),
+                'label' => __('List Title', 'gamequery-servers-lists'),
                 'value' => $title,
             ),
             array(
-                'label' => __('Shortcode', 'gamequery-server-lists'),
+                'label' => __('Shortcode', 'gamequery-servers-lists'),
                 'value' => '[gamequery_' . $list_id . ']',
             ),
             array(
-                'label' => __('Groups', 'gamequery-server-lists'),
+                'label' => __('Groups', 'gamequery-servers-lists'),
                 'value' => number_format_i18n(isset($row['group_count']) ? (int) $row['group_count'] : 0),
             ),
             array(
-                'label' => __('Servers', 'gamequery-server-lists'),
+                'label' => __('Servers', 'gamequery-servers-lists'),
                 'value' => number_format_i18n(isset($row['server_count']) ? (int) $row['server_count'] : 0),
             ),
             array(
-                'label' => __('Total Views', 'gamequery-server-lists'),
+                'label' => __('Total Views', 'gamequery-servers-lists'),
                 'value' => number_format_i18n($views_total),
             ),
             array(
-                'label' => __('Unique Views', 'gamequery-server-lists'),
+                'label' => __('Unique Views', 'gamequery-servers-lists'),
                 'value' => number_format_i18n($views_unique),
             ),
             array(
-                'label' => __('Total Clicks', 'gamequery-server-lists'),
+                'label' => __('Total Clicks', 'gamequery-servers-lists'),
                 'value' => number_format_i18n($clicks_total),
             ),
             array(
-                'label' => __('Unique Clicks', 'gamequery-server-lists'),
+                'label' => __('Unique Clicks', 'gamequery-servers-lists'),
                 'value' => number_format_i18n($clicks_unique),
             ),
             array(
-                'label' => __('CTR (Total)', 'gamequery-server-lists'),
+                'label' => __('CTR (Total)', 'gamequery-servers-lists'),
                 'value' => number_format_i18n($this->calculate_ctr($clicks_total, $views_total), 2) . '%',
             ),
             array(
-                'label' => __('CTR (Unique)', 'gamequery-server-lists'),
+                'label' => __('CTR (Unique)', 'gamequery-servers-lists'),
                 'value' => number_format_i18n($this->calculate_ctr($clicks_unique, $views_unique), 2) . '%',
             ),
             array(
-                'label' => __('Last Event (UTC)', 'gamequery-server-lists'),
+                'label' => __('Last Event (UTC)', 'gamequery-servers-lists'),
                 'value' => isset($row['last_event']) && '' !== (string) $row['last_event'] ? (string) $row['last_event'] : '—',
             ),
         );
@@ -1540,7 +1540,7 @@ class WPGS_Admin {
         if (!wp_http_validate_url($account_base_url)) {
             wp_send_json_error(
                 array(
-                    'message' => __('Account base URL is invalid.', 'gamequery-server-lists'),
+                    'message' => __('Account base URL is invalid.', 'gamequery-servers-lists'),
                 ),
                 400
             );
@@ -1563,7 +1563,7 @@ class WPGS_Admin {
         if (empty($response['success'])) {
             $message = !empty($response['message'])
                 ? (string) $response['message']
-                : __('Unable to start account connection right now.', 'gamequery-server-lists');
+                : __('Unable to start account connection right now.', 'gamequery-servers-lists');
 
             wp_send_json_error(
                 array(
@@ -1589,7 +1589,7 @@ class WPGS_Admin {
         ) {
             wp_send_json_error(
                 array(
-                    'message' => __('GameQuery returned an invalid connection payload.', 'gamequery-server-lists'),
+                    'message' => __('GameQuery returned an invalid connection payload.', 'gamequery-servers-lists'),
                 ),
                 502
             );
@@ -1600,7 +1600,7 @@ class WPGS_Admin {
         if (!is_string($base_host) || !is_string($authorize_host) || strtolower($base_host) !== strtolower($authorize_host)) {
             wp_send_json_error(
                 array(
-                    'message' => __('GameQuery returned an unexpected authorize host.', 'gamequery-server-lists'),
+                    'message' => __('GameQuery returned an unexpected authorize host.', 'gamequery-servers-lists'),
                 ),
                 502
             );
@@ -1640,7 +1640,7 @@ class WPGS_Admin {
         if (empty($session_id)) {
             wp_send_json_error(
                 array(
-                    'message' => __('Connection session is invalid or missing.', 'gamequery-server-lists'),
+                    'message' => __('Connection session is invalid or missing.', 'gamequery-servers-lists'),
                 ),
                 400
             );
@@ -1651,7 +1651,7 @@ class WPGS_Admin {
             wp_send_json_success(
                 array(
                     'status' => 'expired',
-                    'message' => __('Connection session has expired. Please start again.', 'gamequery-server-lists'),
+                    'message' => __('Connection session has expired. Please start again.', 'gamequery-servers-lists'),
                 )
             );
         }
@@ -1660,7 +1660,7 @@ class WPGS_Admin {
         if ($created_by !== get_current_user_id()) {
             wp_send_json_error(
                 array(
-                    'message' => __('This connection session belongs to another admin user.', 'gamequery-server-lists'),
+                    'message' => __('This connection session belongs to another admin user.', 'gamequery-servers-lists'),
                 ),
                 403
             );
@@ -1683,7 +1683,7 @@ class WPGS_Admin {
             delete_transient($this->get_connect_transient_key($session_id));
             wp_send_json_error(
                 array(
-                    'message' => __('Stored connection session is invalid. Please start again.', 'gamequery-server-lists'),
+                    'message' => __('Stored connection session is invalid. Please start again.', 'gamequery-servers-lists'),
                 ),
                 400
             );
@@ -1694,7 +1694,7 @@ class WPGS_Admin {
             wp_send_json_success(
                 array(
                     'status' => 'expired',
-                    'message' => __('Connection session has expired. Please start again.', 'gamequery-server-lists'),
+                    'message' => __('Connection session has expired. Please start again.', 'gamequery-servers-lists'),
                 )
             );
         }
@@ -1713,7 +1713,7 @@ class WPGS_Admin {
                 wp_send_json_success(
                     array(
                         'status' => 'expired',
-                        'message' => __('Connection session is no longer available. Please start again.', 'gamequery-server-lists'),
+                        'message' => __('Connection session is no longer available. Please start again.', 'gamequery-servers-lists'),
                     )
                 );
             }
@@ -1722,7 +1722,7 @@ class WPGS_Admin {
                 array(
                     'message' => !empty($poll_response['message'])
                         ? (string) $poll_response['message']
-                        : __('Failed to poll GameQuery connection status.', 'gamequery-server-lists'),
+                        : __('Failed to poll GameQuery connection status.', 'gamequery-servers-lists'),
                 ),
                 502
             );
@@ -1744,7 +1744,7 @@ class WPGS_Admin {
             wp_send_json_success(
                 array(
                     'status' => 'cancelled',
-                    'message' => __('Connection was cancelled from GameQuery.', 'gamequery-server-lists'),
+                    'message' => __('Connection was cancelled from GameQuery.', 'gamequery-servers-lists'),
                 )
             );
         }
@@ -1754,7 +1754,7 @@ class WPGS_Admin {
             wp_send_json_success(
                 array(
                     'status' => 'expired',
-                    'message' => __('Connection session has expired. Please start again.', 'gamequery-server-lists'),
+                    'message' => __('Connection session has expired. Please start again.', 'gamequery-servers-lists'),
                 )
             );
         }
@@ -1762,7 +1762,7 @@ class WPGS_Admin {
         if ('approved' !== $status) {
             wp_send_json_error(
                 array(
-                    'message' => __('Unexpected connection status received from GameQuery.', 'gamequery-server-lists'),
+                    'message' => __('Unexpected connection status received from GameQuery.', 'gamequery-servers-lists'),
                 ),
                 502
             );
@@ -1772,7 +1772,7 @@ class WPGS_Admin {
         if (!preg_match('/^pca_[a-f0-9]{32,128}$/', $authorization_code)) {
             wp_send_json_error(
                 array(
-                    'message' => __('Invalid authorization code received from GameQuery.', 'gamequery-server-lists'),
+                    'message' => __('Invalid authorization code received from GameQuery.', 'gamequery-servers-lists'),
                 ),
                 502
             );
@@ -1803,7 +1803,7 @@ class WPGS_Admin {
                 array(
                     'message' => !empty($exchange_response['message'])
                         ? (string) $exchange_response['message']
-                        : __('Failed to finalize account connection.', 'gamequery-server-lists'),
+                        : __('Failed to finalize account connection.', 'gamequery-servers-lists'),
                 ),
                 502
             );
@@ -1820,7 +1820,7 @@ class WPGS_Admin {
         if (empty($email) || empty($api_token)) {
             wp_send_json_error(
                 array(
-                    'message' => __('GameQuery did not return valid credentials.', 'gamequery-server-lists'),
+                    'message' => __('GameQuery did not return valid credentials.', 'gamequery-servers-lists'),
                 ),
                 502
             );
@@ -1836,14 +1836,14 @@ class WPGS_Admin {
         if (!empty($key_name)) {
             $notice_message = sprintf(
                 /* translators: 1: API email, 2: API key name */
-                __('Connected GameQuery account %1$s using key "%2$s".', 'gamequery-server-lists'),
+                __('Connected GameQuery account %1$s using key "%2$s".', 'gamequery-servers-lists'),
                 $email,
                 $key_name
             );
         } else {
             $notice_message = sprintf(
                 /* translators: %s: API email */
-                __('Connected GameQuery account %s.', 'gamequery-server-lists'),
+                __('Connected GameQuery account %s.', 'gamequery-servers-lists'),
                 $email
             );
         }
@@ -1869,7 +1869,7 @@ class WPGS_Admin {
         if (!current_user_can('manage_options')) {
             wp_send_json_error(
                 array(
-                    'message' => __('You do not have permission to perform this action.', 'gamequery-server-lists'),
+                    'message' => __('You do not have permission to perform this action.', 'gamequery-servers-lists'),
                 ),
                 403
             );
@@ -1878,7 +1878,7 @@ class WPGS_Admin {
         if (!check_ajax_referer(self::CONNECT_NONCE_ACTION, 'nonce', false)) {
             wp_send_json_error(
                 array(
-                    'message' => __('Security check failed. Please refresh and try again.', 'gamequery-server-lists'),
+                    'message' => __('Security check failed. Please refresh and try again.', 'gamequery-servers-lists'),
                 ),
                 403
             );
@@ -1974,10 +1974,10 @@ class WPGS_Admin {
         $success = $http_success && $app_success;
 
         $fallback_message = $http_success
-            ? __('Unexpected response from GameQuery.', 'gamequery-server-lists')
+            ? __('Unexpected response from GameQuery.', 'gamequery-servers-lists')
             : sprintf(
                 /* translators: %d: HTTP status code */
-                __('GameQuery responded with HTTP %d.', 'gamequery-server-lists'),
+                __('GameQuery responded with HTTP %d.', 'gamequery-servers-lists'),
                 $status_code
             );
 
@@ -2049,7 +2049,7 @@ class WPGS_Admin {
 
         if (WPGS_Settings::should_warn_free_ttl()) {
             echo '<div class="notice notice-warning"><p>';
-            echo esc_html__('WPGS warning: FREE plan with cache TTL under 60 seconds can exhaust your daily quota quickly.', 'gamequery-server-lists');
+            echo esc_html__('WPGS warning: FREE plan with cache TTL under 60 seconds can exhaust your daily quota quickly.', 'gamequery-servers-lists');
             echo '</p></div>';
         }
 

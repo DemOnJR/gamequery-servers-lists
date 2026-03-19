@@ -42,7 +42,7 @@ WPGS is a WordPress plugin for embedding GameQuery API server lists with shortco
 
 Plugin path:
 
-`deploy/wordpress/plugins/gamequery-server-lists/`
+`deploy/wordpress/plugins/gamequery-servers-lists/`
 
 Copy/sync the plugin folder into your WordPress plugins directory, then activate it from WP Admin.
 

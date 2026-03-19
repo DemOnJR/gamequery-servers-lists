@@ -610,6 +610,18 @@
     margin-bottom: 10px;
 }
 
+.wpgs-game-search {
+    margin-bottom: 8px;
+}
+
+.wpgs-game-select {
+    max-width: 100%;
+}
+
+.wpgs-game-id-manual {
+    font-family: Consolas, Monaco, monospace;
+}
+
 .wpgs-display-options {
     display: grid;
     gap: 8px;

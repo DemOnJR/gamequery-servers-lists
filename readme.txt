@@ -3,7 +3,7 @@ Contributors: pbdaemon
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,12 +31,18 @@ Key features include:
 
 == Installation ==
 
-1. Upload plugin files to `/wp-content/plugins/gamequery-server-lists`, or install through your deployment process.
+1. Upload plugin files to `/wp-content/plugins/gamequery-servers-lists`, or install through your deployment process.
 2. Activate the plugin through the "Plugins" screen in WordPress.
 3. In `WPGS -> Settings`, connect your account with the one-click GameQuery popup (or use manual credentials).
 4. Create lists in `WPGS -> Lists`.
 
 == Changelog ==
+
+= 0.1.4 =
+* Replace browser datalist behavior with a dedicated searchable game selector in Server Groups.
+* Add manual Game ID override support while keeping automatic game-name to game-id mapping.
+* Store the games catalog in WordPress DB and refresh it every 7 days.
+* Update manual Game ID placeholder example to `minecraft`.
 
 = 0.1.3 =
 * Add secure one-click GameQuery account connect flow with popup key selection.

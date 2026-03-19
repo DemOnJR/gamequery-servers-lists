@@ -8,7 +8,8 @@ class WPGS_Lists {
     const POST_TYPE = 'wpgs_list';
     const META_GROUPS = '_wpgs_groups';
     const META_DISPLAY = '_wpgs_display';
-    const GAMES_CATALOG_TRANSIENT = 'wpgs_games_catalog';
+    const GAMES_CATALOG_OPTION = 'wpgs_games_catalog';
+    const GAMES_CATALOG_REFRESH_SECONDS = 7 * DAY_IN_SECONDS;
     const META_CAMPAIGN = '_wpgs_campaign';
     const META_CAMPAIGN_ENDED = '_wpgs_campaign_ended';
     const META_CAMPAIGN_ENDED_AT = '_wpgs_campaign_ended_at';
@@ -33,17 +34,17 @@ class WPGS_Lists {
 
     public static function register_post_type_static() {
         $labels = array(
-            'name' => __('WPGS Lists', 'gamequery-server-lists'),
-            'singular_name' => __('WPGS List', 'gamequery-server-lists'),
-            'add_new' => __('Add New List', 'gamequery-server-lists'),
-            'add_new_item' => __('Add New WPGS List', 'gamequery-server-lists'),
-            'edit_item' => __('Edit WPGS List', 'gamequery-server-lists'),
-            'new_item' => __('New WPGS List', 'gamequery-server-lists'),
-            'view_item' => __('View WPGS List', 'gamequery-server-lists'),
-            'search_items' => __('Search WPGS Lists', 'gamequery-server-lists'),
-            'not_found' => __('No lists found', 'gamequery-server-lists'),
-            'not_found_in_trash' => __('No lists found in Trash', 'gamequery-server-lists'),
-            'menu_name' => __('WPGS Lists', 'gamequery-server-lists'),
+            'name' => __('WPGS Lists', 'gamequery-servers-lists'),
+            'singular_name' => __('WPGS List', 'gamequery-servers-lists'),
+            'add_new' => __('Add New List', 'gamequery-servers-lists'),
+            'add_new_item' => __('Add New WPGS List', 'gamequery-servers-lists'),
+            'edit_item' => __('Edit WPGS List', 'gamequery-servers-lists'),
+            'new_item' => __('New WPGS List', 'gamequery-servers-lists'),
+            'view_item' => __('View WPGS List', 'gamequery-servers-lists'),
+            'search_items' => __('Search WPGS Lists', 'gamequery-servers-lists'),
+            'not_found' => __('No lists found', 'gamequery-servers-lists'),
+            'not_found_in_trash' => __('No lists found in Trash', 'gamequery-servers-lists'),
+            'menu_name' => __('WPGS Lists', 'gamequery-servers-lists'),
         );
 
         register_post_type(
@@ -72,13 +73,13 @@ class WPGS_Lists {
             $result['cb'] = $columns['cb'];
         }
 
-        $result['title'] = __('Title', 'gamequery-server-lists');
-        $result['wpgs_shortcode'] = __('Shortcode', 'gamequery-server-lists');
-        $result['wpgs_groups'] = __('Groups', 'gamequery-server-lists');
-        $result['wpgs_servers'] = __('Servers', 'gamequery-server-lists');
-        $result['wpgs_views'] = __('Views', 'gamequery-server-lists');
-        $result['wpgs_clicks'] = __('Clicks', 'gamequery-server-lists');
-        $result['date'] = __('Date', 'gamequery-server-lists');
+        $result['title'] = __('Title', 'gamequery-servers-lists');
+        $result['wpgs_shortcode'] = __('Shortcode', 'gamequery-servers-lists');
+        $result['wpgs_groups'] = __('Groups', 'gamequery-servers-lists');
+        $result['wpgs_servers'] = __('Servers', 'gamequery-servers-lists');
+        $result['wpgs_views'] = __('Views', 'gamequery-servers-lists');
+        $result['wpgs_clicks'] = __('Clicks', 'gamequery-servers-lists');
+        $result['date'] = __('Date', 'gamequery-servers-lists');
 
         return $result;
     }
@@ -109,7 +110,7 @@ class WPGS_Lists {
 
             echo esc_html((string) $server_count);
             if ($is_limit_exceeded) {
-                echo ' <span class="wpgs-pill wpgs-pill-warning">' . esc_html__('Limit exceeded', 'gamequery-server-lists') . '</span>';
+                echo ' <span class="wpgs-pill wpgs-pill-warning">' . esc_html__('Limit exceeded', 'gamequery-servers-lists') . '</span>';
             }
 
             return;
@@ -151,7 +152,7 @@ class WPGS_Lists {
         echo '<a href="' . esc_url($stats_url) . '" class="wpgs-stats-cell-link">';
         echo '<strong>' . esc_html((string) $total) . '</strong>';
         echo '<br />';
-        echo '<span class="description">' . esc_html__('Unique:', 'gamequery-server-lists') . ' ' . esc_html((string) $unique) . '</span>';
+        echo '<span class="description">' . esc_html__('Unique:', 'gamequery-servers-lists') . ' ' . esc_html((string) $unique) . '</span>';
         echo '</a>';
     }
 
@@ -161,7 +162,7 @@ class WPGS_Lists {
     public function add_meta_boxes($post) {
         add_meta_box(
             'wpgs_template_metabox',
-            __('Choose Template', 'gamequery-server-lists'),
+            __('Choose Template', 'gamequery-servers-lists'),
             array($this, 'render_template_metabox'),
             self::POST_TYPE,
             'normal',
@@ -170,7 +171,7 @@ class WPGS_Lists {
 
         add_meta_box(
             'wpgs_groups_metabox',
-            __('Server Groups', 'gamequery-server-lists'),
+            __('Server Groups', 'gamequery-servers-lists'),
             array($this, 'render_groups_metabox'),
             self::POST_TYPE,
             'normal',
@@ -179,7 +180,7 @@ class WPGS_Lists {
 
         add_meta_box(
             'wpgs_campaign_metabox',
-            __('Campaign Goal', 'gamequery-server-lists'),
+            __('Campaign Goal', 'gamequery-servers-lists'),
             array($this, 'render_campaign_metabox'),
             self::POST_TYPE,
             'side',
@@ -188,7 +189,7 @@ class WPGS_Lists {
 
         add_meta_box(
             'wpgs_display_metabox',
-            __('Display Fields', 'gamequery-server-lists'),
+            __('Display Fields', 'gamequery-servers-lists'),
             array($this, 'render_display_metabox'),
             self::POST_TYPE,
             'side',
@@ -197,7 +198,7 @@ class WPGS_Lists {
 
         add_meta_box(
             'wpgs_css_metabox',
-            __('Custom CSS', 'gamequery-server-lists'),
+            __('Custom CSS', 'gamequery-servers-lists'),
             array($this, 'render_css_metabox'),
             self::POST_TYPE,
             'normal',
@@ -218,8 +219,8 @@ class WPGS_Lists {
 
         echo '<div class="wpgs-template-controls">';
         echo '<div class="wpgs-template-control wpgs-template-control-category">';
-        echo '<select id="wpgs-template-category" aria-label="' . esc_attr__('Filter templates by category', 'gamequery-server-lists') . '">';
-        echo '<option value="">' . esc_html__('All categories', 'gamequery-server-lists') . '</option>';
+        echo '<select id="wpgs-template-category" aria-label="' . esc_attr__('Filter templates by category', 'gamequery-servers-lists') . '">';
+        echo '<option value="">' . esc_html__('All categories', 'gamequery-servers-lists') . '</option>';
         foreach ($template_categories as $category_key => $category_label) {
             echo '<option value="' . esc_attr($category_key) . '">' . esc_html($category_label) . '</option>';
         }
@@ -227,7 +228,7 @@ class WPGS_Lists {
         echo '</div>';
 
         echo '<div class="wpgs-template-control wpgs-template-control-search">';
-        echo '<input type="search" id="wpgs-template-search" class="regular-text" placeholder="' . esc_attr__('Search templates...', 'gamequery-server-lists') . '" aria-label="' . esc_attr__('Search templates', 'gamequery-server-lists') . '" />';
+        echo '<input type="search" id="wpgs-template-search" class="regular-text" placeholder="' . esc_attr__('Search templates...', 'gamequery-servers-lists') . '" aria-label="' . esc_attr__('Search templates', 'gamequery-servers-lists') . '" />';
         echo '</div>';
         echo '</div>';
 
@@ -236,7 +237,7 @@ class WPGS_Lists {
             $this->render_template_card($template_key, $template, $current_template);
         }
         echo '</div>';
-        echo '<p id="wpgs-template-empty" class="description wpgs-template-empty" style="display:none;">' . esc_html__('No templates match your current filters.', 'gamequery-server-lists') . '</p>';
+        echo '<p id="wpgs-template-empty" class="description wpgs-template-empty" style="display:none;">' . esc_html__('No templates match your current filters.', 'gamequery-servers-lists') . '</p>';
 
         echo '</div>';
 
@@ -263,9 +264,10 @@ class WPGS_Lists {
         }
 
         if (!empty($games_catalog)) {
-            echo '<p>' . esc_html__('Add one or more game groups. Search by game name and add one or more server addresses.', 'gamequery-server-lists') . '</p>';
+            echo '<p>' . esc_html__('Add one or more game groups. Search by game name and select it from the list, or use manual Game ID override.', 'gamequery-servers-lists') . '</p>';
+            echo '<p class="description">' . esc_html__('Game catalog is stored in WordPress database and refreshed every 7 days.', 'gamequery-servers-lists') . '</p>';
         } else {
-            echo '<p>' . esc_html__('Add one or more game groups. Each group has one game ID and one or more server addresses.', 'gamequery-server-lists') . '</p>';
+            echo '<p>' . esc_html__('Add one or more game groups. Each group has one game ID and one or more server addresses.', 'gamequery-servers-lists') . '</p>';
         }
 
         echo '<div id="wpgs-groups" class="wpgs-groups">';
@@ -276,19 +278,11 @@ class WPGS_Lists {
 
         echo '</div>';
 
+        echo '<p><button type="button" class="button" id="wpgs-add-group">' . esc_html__('Add Group', 'gamequery-servers-lists') . '</button></p>';
         if (!empty($games_catalog)) {
-            echo '<datalist id="wpgs-game-catalog">';
-            foreach ($games_catalog as $game_id => $game_name) {
-                echo '<option value="' . esc_attr($game_name) . '" data-game-id="' . esc_attr($game_id) . '" label="' . esc_attr($game_id) . '"></option>';
-            }
-            echo '</datalist>';
+            echo '<p class="description">' . esc_html__('Tip: Use the search box to filter games quickly. Manual Game ID takes priority if both are filled.', 'gamequery-servers-lists') . '</p>';
         }
-
-        echo '<p><button type="button" class="button" id="wpgs-add-group">' . esc_html__('Add Group', 'gamequery-server-lists') . '</button></p>';
-        if (!empty($games_catalog)) {
-            echo '<p class="description">' . esc_html__('Tip: start typing a game name and select it from the dropdown. If your game is not listed, you can still type the raw game ID.', 'gamequery-server-lists') . '</p>';
-        }
-        echo '<p class="description">' . esc_html__('Server format: IP:PORT (example: 127.0.0.1:27015). One server per line or comma-separated.', 'gamequery-server-lists') . '</p>';
+        echo '<p class="description">' . esc_html__('Server format: IP:PORT (example: 127.0.0.1:27015). One server per line or comma-separated.', 'gamequery-servers-lists') . '</p>';
 
         $this->render_groups_metabox_script();
     }
@@ -346,7 +340,7 @@ class WPGS_Lists {
 
         echo '<div class="wpgs-template-live-preview" id="wpgs-template-live-preview">';
         echo '<div class="wpgs-template-live-head">';
-        echo '<strong>' . esc_html__('Live Preview', 'gamequery-server-lists') . '</strong>';
+        echo '<strong>' . esc_html__('Live Preview', 'gamequery-servers-lists') . '</strong>';
         echo '<span id="wpgs-template-live-label">' . esc_html($current_label) . '</span>';
         echo '</div>';
 
@@ -360,12 +354,12 @@ class WPGS_Lists {
         echo '<span class="wpgs-server-address">127.0.0.1:27015</span>';
         echo '</div>';
         echo '<div class="wpgs-card-status">';
-        echo '<span class="wpgs-status wpgs-status-online"><span class="wpgs-status-dot"></span>' . esc_html__('Online', 'gamequery-server-lists') . '</span>';
+        echo '<span class="wpgs-status wpgs-status-online"><span class="wpgs-status-dot"></span>' . esc_html__('Online', 'gamequery-servers-lists') . '</span>';
         echo '</div>';
         echo '<div class="wpgs-card-meta">';
-        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Map', 'gamequery-server-lists') . '</span>de_dust2</span>';
-        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Players', 'gamequery-server-lists') . '</span>12</span>';
-        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Max', 'gamequery-server-lists') . '</span>32</span>';
+        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Map', 'gamequery-servers-lists') . '</span>de_dust2</span>';
+        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Players', 'gamequery-servers-lists') . '</span>12</span>';
+        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Max', 'gamequery-servers-lists') . '</span>32</span>';
         echo '</div>';
         echo '</div>';
         echo '<div class="wpgs-card">';
@@ -374,12 +368,12 @@ class WPGS_Lists {
         echo '<span class="wpgs-server-address">127.0.0.1:27016</span>';
         echo '</div>';
         echo '<div class="wpgs-card-status">';
-        echo '<span class="wpgs-status wpgs-status-offline"><span class="wpgs-status-dot"></span>' . esc_html__('Offline', 'gamequery-server-lists') . '</span>';
+        echo '<span class="wpgs-status wpgs-status-offline"><span class="wpgs-status-dot"></span>' . esc_html__('Offline', 'gamequery-servers-lists') . '</span>';
         echo '</div>';
         echo '<div class="wpgs-card-meta">';
-        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Map', 'gamequery-server-lists') . '</span>de_mirage</span>';
-        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Players', 'gamequery-server-lists') . '</span>21</span>';
-        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Max', 'gamequery-server-lists') . '</span>32</span>';
+        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Map', 'gamequery-servers-lists') . '</span>de_mirage</span>';
+        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Players', 'gamequery-servers-lists') . '</span>21</span>';
+        echo '<span class="wpgs-meta-pill"><span class="wpgs-meta-label">' . esc_html__('Max', 'gamequery-servers-lists') . '</span>32</span>';
         echo '</div>';
         echo '</div>';
         echo '</div>';
@@ -390,7 +384,7 @@ class WPGS_Lists {
         echo '<div class="wpgs-template-preview-pane' . ($is_table_pane ? ' is-active' : '') . '" data-preview-pane="table"' . ($is_table_pane ? '' : ' hidden') . '>';
         echo '<div class="wpgs-table-wrapper wpgs-template-live-table-wrap" id="wpgs-template-live-table-wrap">';
         echo '<table class="wpgs-table">';
-        echo '<thead><tr><th>' . esc_html__('Name', 'gamequery-server-lists') . '</th><th>' . esc_html__('Address', 'gamequery-server-lists') . '</th><th>' . esc_html__('Players', 'gamequery-server-lists') . '</th><th>' . esc_html__('Status', 'gamequery-server-lists') . '</th></tr></thead>';
+        echo '<thead><tr><th>' . esc_html__('Name', 'gamequery-servers-lists') . '</th><th>' . esc_html__('Address', 'gamequery-servers-lists') . '</th><th>' . esc_html__('Players', 'gamequery-servers-lists') . '</th><th>' . esc_html__('Status', 'gamequery-servers-lists') . '</th></tr></thead>';
         echo '<tbody>';
         echo '<tr><td>Dust2 Classic #1</td><td>127.0.0.1:27015</td><td>12</td><td><span class="wpgs-status wpgs-status-online">online</span></td></tr>';
         echo '<tr><td>Mirage Ranked</td><td>127.0.0.1:27016</td><td>21</td><td><span class="wpgs-status wpgs-status-offline">offline</span></td></tr>';
@@ -452,24 +446,44 @@ class WPGS_Lists {
         $game_id = isset($group['game_id']) ? (string) $group['game_id'] : '';
         $servers = isset($group['servers']) && is_array($group['servers']) ? $group['servers'] : array();
         $servers_value = implode("\n", array_map('strval', $servers));
-        $game_display = isset($games_catalog[$game_id]) ? (string) $games_catalog[$game_id] : $game_id;
+        $selected_game_id = isset($games_catalog[$game_id]) ? $game_id : '';
+        $manual_game_id = '' === $selected_game_id ? $game_id : '';
 
         echo '<div class="wpgs-group-row" data-index="' . esc_attr((string) $index) . '">';
         echo '<div class="wpgs-group-row-head">';
-        echo '<strong class="wpgs-group-title">' . esc_html__('Group', 'gamequery-server-lists') . ' #' . esc_html((string) ($index + 1)) . '</strong>';
-        echo '<button type="button" class="button-link-delete wpgs-remove-group">' . esc_html__('Remove', 'gamequery-server-lists') . '</button>';
+        echo '<strong class="wpgs-group-title">' . esc_html__('Group', 'gamequery-servers-lists') . ' #' . esc_html((string) ($index + 1)) . '</strong>';
+        echo '<button type="button" class="button-link-delete wpgs-remove-group">' . esc_html__('Remove', 'gamequery-servers-lists') . '</button>';
         echo '</div>';
-        echo '<p>';
+
         if (!empty($games_catalog)) {
-            echo '<label><strong>' . esc_html__('Game', 'gamequery-server-lists') . '</strong></label>';
-            echo '<input type="text" class="widefat" list="wpgs-game-catalog" name="wpgs_groups[' . esc_attr((string) $index) . '][game_id]" value="' . esc_attr($game_display) . '" placeholder="' . esc_attr__('Search game name...', 'gamequery-server-lists') . '" autocomplete="off" />';
+            echo '<p>';
+            echo '<label><strong>' . esc_html__('Game', 'gamequery-servers-lists') . '</strong></label>';
+            echo '<input type="search" class="widefat wpgs-game-search" placeholder="' . esc_attr__('Search games...', 'gamequery-servers-lists') . '" />';
+            echo '</p>';
+
+            echo '<p>';
+            echo '<select class="widefat wpgs-game-select" name="wpgs_groups[' . esc_attr((string) $index) . '][game_id]">';
+            echo '<option value="">' . esc_html__('Select a game...', 'gamequery-servers-lists') . '</option>';
+            foreach ($games_catalog as $catalog_game_id => $catalog_game_name) {
+                $option_label = $catalog_game_name . ' (' . $catalog_game_id . ')';
+                echo '<option value="' . esc_attr($catalog_game_id) . '"' . selected($selected_game_id, $catalog_game_id, false) . '>' . esc_html($option_label) . '</option>';
+            }
+            echo '</select>';
+            echo '</p>';
+
+            echo '<p>';
+            echo '<label><strong>' . esc_html__('Game ID (manual override)', 'gamequery-servers-lists') . '</strong></label>';
+            echo '<input type="text" class="widefat wpgs-game-id-manual" name="wpgs_groups[' . esc_attr((string) $index) . '][game_id_manual]" value="' . esc_attr($manual_game_id) . '" placeholder="minecraft" />';
+            echo '</p>';
         } else {
-            echo '<label><strong>' . esc_html__('Game ID', 'gamequery-server-lists') . '</strong></label>';
+            echo '<p>';
+            echo '<label><strong>' . esc_html__('Game ID', 'gamequery-servers-lists') . '</strong></label>';
             echo '<input type="text" class="widefat" name="wpgs_groups[' . esc_attr((string) $index) . '][game_id]" value="' . esc_attr($game_id) . '" placeholder="counterstrike16" />';
+            echo '</p>';
         }
-        echo '</p>';
+
         echo '<p>';
-        echo '<label><strong>' . esc_html__('Servers', 'gamequery-server-lists') . '</strong></label>';
+        echo '<label><strong>' . esc_html__('Servers', 'gamequery-servers-lists') . '</strong></label>';
         echo '<textarea class="widefat code" rows="6" name="wpgs_groups[' . esc_attr((string) $index) . '][servers]" placeholder="127.0.0.1:27015">' . esc_textarea($servers_value) . '</textarea>';
         echo '</p>';
         echo '</div>';
@@ -667,7 +681,7 @@ class WPGS_Lists {
                             title.textContent = 'Group #' + String(index + 1);
                         }
 
-                        row.querySelectorAll('input, textarea').forEach(function (field) {
+                        row.querySelectorAll('input, textarea, select').forEach(function (field) {
                             if (!field.name) {
                                 return;
                             }
@@ -701,6 +715,139 @@ class WPGS_Lists {
                     });
                 }
 
+                function bindGameSelectors() {
+                    container.querySelectorAll('.wpgs-group-row').forEach(function (row) {
+                        const searchField = row.querySelector('.wpgs-game-search');
+                        const selectField = row.querySelector('.wpgs-game-select');
+                        const manualField = row.querySelector('.wpgs-game-id-manual');
+
+                        if (!searchField || !selectField) {
+                            return;
+                        }
+
+                        if (selectField.dataset.optionSource !== '1') {
+                            const options = Array.prototype.slice.call(selectField.options).map(function (option) {
+                                return {
+                                    value: option.value,
+                                    text: option.textContent || option.innerText || '',
+                                };
+                            });
+
+                            try {
+                                selectField.dataset.options = JSON.stringify(options);
+                                selectField.dataset.optionSource = '1';
+                            } catch (error) {
+                                return;
+                            }
+                        }
+
+                        function getOriginalOptions() {
+                            if (!selectField.dataset.options) {
+                                return [];
+                            }
+
+                            try {
+                                const parsed = JSON.parse(selectField.dataset.options);
+                                return Array.isArray(parsed) ? parsed : [];
+                            } catch (error) {
+                                return [];
+                            }
+                        }
+
+                        function restoreSelectOptions(filterText) {
+                            const currentValue = selectField.value;
+                            const normalizedFilter = String(filterText || '').trim().toLowerCase();
+                            const options = getOriginalOptions();
+
+                            if (!options.length) {
+                                return;
+                            }
+
+                            selectField.innerHTML = '';
+
+                            options.forEach(function (option, index) {
+                                const optionValue = String(option.value || '');
+                                const optionText = String(option.text || '');
+
+                                if (index > 0 && '' !== normalizedFilter) {
+                                    const optionSearch = (optionText + ' ' + optionValue).toLowerCase();
+                                    if (-1 === optionSearch.indexOf(normalizedFilter)) {
+                                        return;
+                                    }
+                                }
+
+                                const optionNode = document.createElement('option');
+                                optionNode.value = optionValue;
+                                optionNode.textContent = optionText;
+                                if (optionValue === currentValue) {
+                                    optionNode.selected = true;
+                                }
+
+                                selectField.appendChild(optionNode);
+                            });
+
+                            if (currentValue && !Array.prototype.slice.call(selectField.options).some(function (option) {
+                                return option.value === currentValue;
+                            })) {
+                                const fallback = options.find(function (option) {
+                                    return String(option.value || '') === currentValue;
+                                });
+
+                                if (fallback) {
+                                    const optionNode = document.createElement('option');
+                                    optionNode.value = String(fallback.value || '');
+                                    optionNode.textContent = String(fallback.text || '');
+                                    optionNode.selected = true;
+                                    selectField.appendChild(optionNode);
+                                }
+                            }
+                        }
+
+                        if (searchField.dataset.boundGameSearch !== '1') {
+                            searchField.dataset.boundGameSearch = '1';
+                            searchField.addEventListener('input', function () {
+                                restoreSelectOptions(searchField.value || '');
+                            });
+                        }
+
+                        if (selectField.dataset.boundGameSelect !== '1') {
+                            selectField.dataset.boundGameSelect = '1';
+                            selectField.addEventListener('change', function () {
+                                if (!manualField || !selectField.value) {
+                                    return;
+                                }
+
+                                manualField.value = '';
+                            });
+                        }
+
+                        if (manualField && manualField.dataset.boundManualInput !== '1') {
+                            manualField.dataset.boundManualInput = '1';
+                            manualField.addEventListener('input', function () {
+                                if ('' !== String(manualField.value || '').trim()) {
+                                    selectField.value = '';
+                                }
+                            });
+                        }
+
+                        restoreSelectOptions(searchField.value || '');
+                    });
+                }
+
+                function clearCloneState(clone) {
+                    clone.querySelectorAll('[data-bound], [data-bound-game-search], [data-bound-game-select], [data-bound-manual-input]').forEach(function (node) {
+                        delete node.dataset.bound;
+                        delete node.dataset.boundGameSearch;
+                        delete node.dataset.boundGameSelect;
+                        delete node.dataset.boundManualInput;
+                    });
+
+                    clone.querySelectorAll('.wpgs-game-select').forEach(function (selectField) {
+                        delete selectField.dataset.optionSource;
+                        delete selectField.dataset.options;
+                    });
+                }
+
                 addButton.addEventListener('click', function () {
                     const rows = container.querySelectorAll('.wpgs-group-row');
                     if (!rows.length) {
@@ -708,16 +855,25 @@ class WPGS_Lists {
                     }
 
                     const clone = rows[rows.length - 1].cloneNode(true);
-                    clone.querySelectorAll('input, textarea').forEach(function (field) {
+                    clearCloneState(clone);
+
+                    clone.querySelectorAll('input, textarea, select').forEach(function (field) {
+                        if ('SELECT' === field.tagName) {
+                            field.selectedIndex = 0;
+                            return;
+                        }
+
                         field.value = '';
                     });
 
                     container.appendChild(clone);
                     attachRemoveHandlers();
+                    bindGameSelectors();
                     reindexRows();
                 });
 
                 attachRemoveHandlers();
+                bindGameSelectors();
                 reindexRows();
             }());
         </script>
@@ -741,14 +897,14 @@ class WPGS_Lists {
         $is_ended = !empty($campaign_state['ended']);
         $ended_at = isset($campaign_state['ended_at']) ? (string) $campaign_state['ended_at'] : '';
 
-        $status_label = __('Disabled', 'gamequery-server-lists');
+        $status_label = __('Disabled', 'gamequery-servers-lists');
         if (!empty($campaign['enabled'])) {
             if ($is_ended) {
-                $status_label = __('Ended', 'gamequery-server-lists');
+                $status_label = __('Ended', 'gamequery-servers-lists');
             } elseif ($goal_reached && empty($campaign['auto_end'])) {
-                $status_label = __('Goal reached (auto-end off)', 'gamequery-server-lists');
+                $status_label = __('Goal reached (auto-end off)', 'gamequery-servers-lists');
             } else {
-                $status_label = __('Active', 'gamequery-server-lists');
+                $status_label = __('Active', 'gamequery-servers-lists');
             }
         }
 
@@ -757,21 +913,21 @@ class WPGS_Lists {
         if ('views' === $goal_mode) {
             $target_summary = sprintf(
                 /* translators: 1: current unique views, 2: target unique views. */
-                __('Target: %1$s / %2$s unique views', 'gamequery-server-lists'),
+                __('Target: %1$s / %2$s unique views', 'gamequery-servers-lists'),
                 number_format_i18n($views_unique),
                 number_format_i18n($views_target)
             );
         } elseif ('clicks' === $goal_mode) {
             $target_summary = sprintf(
                 /* translators: 1: current unique clicks, 2: target unique clicks. */
-                __('Target: %1$s / %2$s unique clicks', 'gamequery-server-lists'),
+                __('Target: %1$s / %2$s unique clicks', 'gamequery-servers-lists'),
                 number_format_i18n($clicks_unique),
                 number_format_i18n($clicks_target)
             );
         } elseif ('views_and_clicks' === $goal_mode) {
             $target_summary = sprintf(
                 /* translators: 1: current unique views, 2: target unique views, 3: current unique clicks, 4: target unique clicks. */
-                __('Target: views %1$s / %2$s and clicks %3$s / %4$s', 'gamequery-server-lists'),
+                __('Target: views %1$s / %2$s and clicks %3$s / %4$s', 'gamequery-servers-lists'),
                 number_format_i18n($views_unique),
                 number_format_i18n($views_target),
                 number_format_i18n($clicks_unique),
@@ -780,7 +936,7 @@ class WPGS_Lists {
         } else {
             $target_summary = sprintf(
                 /* translators: 1: current unique views, 2: target unique views, 3: current unique clicks, 4: target unique clicks. */
-                __('Target: views %1$s / %2$s or clicks %3$s / %4$s', 'gamequery-server-lists'),
+                __('Target: views %1$s / %2$s or clicks %3$s / %4$s', 'gamequery-servers-lists'),
                 number_format_i18n($views_unique),
                 number_format_i18n($views_target),
                 number_format_i18n($clicks_unique),
@@ -791,11 +947,11 @@ class WPGS_Lists {
         echo '<div class="wpgs-campaign-options">';
         echo '<label class="wpgs-checkbox-row">';
         echo '<input type="checkbox" name="wpgs_campaign[enabled]" value="1" ' . checked(!empty($campaign['enabled']), true, false) . ' />';
-        echo '<span>' . esc_html__('Enable campaign goal', 'gamequery-server-lists') . '</span>';
+        echo '<span>' . esc_html__('Enable campaign goal', 'gamequery-servers-lists') . '</span>';
         echo '</label>';
 
         echo '<p>';
-        echo '<label for="wpgs-campaign-goal-mode"><strong>' . esc_html__('Completion rule', 'gamequery-server-lists') . '</strong></label>';
+        echo '<label for="wpgs-campaign-goal-mode"><strong>' . esc_html__('Completion rule', 'gamequery-servers-lists') . '</strong></label>';
         echo '<select id="wpgs-campaign-goal-mode" class="widefat" name="wpgs_campaign[goal_mode]">';
         foreach ($goal_modes as $mode_key => $mode_label) {
             echo '<option value="' . esc_attr($mode_key) . '" ' . selected($goal_mode, $mode_key, false) . '>' . esc_html($mode_label) . '</option>';
@@ -804,28 +960,28 @@ class WPGS_Lists {
         echo '</p>';
 
         echo '<p>';
-        echo '<label for="wpgs-campaign-views-target"><strong>' . esc_html__('Unique views target', 'gamequery-server-lists') . '</strong></label>';
+        echo '<label for="wpgs-campaign-views-target"><strong>' . esc_html__('Unique views target', 'gamequery-servers-lists') . '</strong></label>';
         echo '<input type="number" min="1" step="1" class="widefat" id="wpgs-campaign-views-target" name="wpgs_campaign[views_unique_target]" value="' . esc_attr((string) $views_target) . '" />';
         echo '</p>';
 
         echo '<p>';
-        echo '<label for="wpgs-campaign-clicks-target"><strong>' . esc_html__('Unique clicks target', 'gamequery-server-lists') . '</strong></label>';
+        echo '<label for="wpgs-campaign-clicks-target"><strong>' . esc_html__('Unique clicks target', 'gamequery-servers-lists') . '</strong></label>';
         echo '<input type="number" min="1" step="1" class="widefat" id="wpgs-campaign-clicks-target" name="wpgs_campaign[clicks_unique_target]" value="' . esc_attr((string) $clicks_target) . '" />';
         echo '</p>';
 
         echo '<label class="wpgs-checkbox-row">';
         echo '<input type="checkbox" name="wpgs_campaign[auto_end]" value="1" ' . checked(!empty($campaign['auto_end']), true, false) . ' />';
-        echo '<span>' . esc_html__('Auto-end campaign when goal is reached', 'gamequery-server-lists') . '</span>';
+        echo '<span>' . esc_html__('Auto-end campaign when goal is reached', 'gamequery-servers-lists') . '</span>';
         echo '</label>';
 
-        echo '<p class="wpgs-campaign-state"><strong>' . esc_html__('Status:', 'gamequery-server-lists') . '</strong> ' . esc_html($status_label) . '</p>';
+        echo '<p class="wpgs-campaign-state"><strong>' . esc_html__('Status:', 'gamequery-servers-lists') . '</strong> ' . esc_html($status_label) . '</p>';
         echo '<p class="description">' . esc_html($target_summary) . '</p>';
         if ($is_ended && '' !== $ended_at) {
             /* translators: %s: campaign end date and time in UTC. */
-            $ended_at_message = sprintf(__('Ended at (UTC): %s', 'gamequery-server-lists'), $ended_at);
+            $ended_at_message = sprintf(__('Ended at (UTC): %s', 'gamequery-servers-lists'), $ended_at);
             echo '<p class="description">' . esc_html($ended_at_message) . '</p>';
         }
-        echo '<p class="description">' . esc_html__('Campaign goals use unique stats from WPGS tracking.', 'gamequery-server-lists') . '</p>';
+        echo '<p class="description">' . esc_html__('Campaign goals use unique stats from WPGS tracking.', 'gamequery-servers-lists') . '</p>';
         echo '</div>';
     }
 
@@ -836,13 +992,13 @@ class WPGS_Lists {
         $display = self::get_display_settings($post->ID);
 
         $fields = array(
-            'show_name' => __('Server name', 'gamequery-server-lists'),
-            'show_address' => __('Server address', 'gamequery-server-lists'),
-            'show_copy_address' => __('Copy IP button', 'gamequery-server-lists'),
-            'show_map' => __('Map', 'gamequery-server-lists'),
-            'show_players' => __('Players', 'gamequery-server-lists'),
-            'show_maxplayers' => __('Max players', 'gamequery-server-lists'),
-            'show_status' => __('Updater status', 'gamequery-server-lists'),
+            'show_name' => __('Server name', 'gamequery-servers-lists'),
+            'show_address' => __('Server address', 'gamequery-servers-lists'),
+            'show_copy_address' => __('Copy IP button', 'gamequery-servers-lists'),
+            'show_map' => __('Map', 'gamequery-servers-lists'),
+            'show_players' => __('Players', 'gamequery-servers-lists'),
+            'show_maxplayers' => __('Max players', 'gamequery-servers-lists'),
+            'show_status' => __('Updater status', 'gamequery-servers-lists'),
         );
 
         echo '<div class="wpgs-display-options">';
@@ -862,7 +1018,7 @@ class WPGS_Lists {
     public function render_css_metabox($post) {
         $custom_css = self::get_custom_css($post->ID);
 
-        echo '<p>' . esc_html__('Custom CSS will be printed with this list output. Scope it to the wrapper class to avoid affecting other elements.', 'gamequery-server-lists') . '</p>';
+        echo '<p>' . esc_html__('Custom CSS will be printed with this list output. Scope it to the wrapper class to avoid affecting other elements.', 'gamequery-servers-lists') . '</p>';
         echo '<p><code>.wpgs-list-' . esc_html((string) $post->ID) . ' .wpgs-table { /* your rules */ }</code></p>';
         echo '<textarea name="wpgs_custom_css" rows="10" class="widefat code" placeholder=".wpgs-list-' . esc_attr((string) $post->ID) . ' .wpgs-table { border-radius: 8px; }">' . esc_textarea($custom_css) . '</textarea>';
     }
@@ -936,7 +1092,7 @@ class WPGS_Lists {
         if ($is_limit_exceeded) {
             $limit_exceeded_message = sprintf(
                 /* translators: %d is the number of servers configured in the list. */
-                __('This list currently has %d servers. The API accepts a maximum of 1000 servers per request.', 'gamequery-server-lists'),
+                __('This list currently has %d servers. The API accepts a maximum of 1000 servers per request.', 'gamequery-servers-lists'),
                 $server_count
             );
 
@@ -967,7 +1123,9 @@ class WPGS_Lists {
                 continue;
             }
 
-            $game_input = isset($raw_group['game_id']) ? sanitize_text_field((string) $raw_group['game_id']) : '';
+            $selected_game_input = isset($raw_group['game_id']) ? sanitize_text_field((string) $raw_group['game_id']) : '';
+            $manual_game_input = isset($raw_group['game_id_manual']) ? sanitize_text_field((string) $raw_group['game_id_manual']) : '';
+            $game_input = '' !== trim($manual_game_input) ? $manual_game_input : $selected_game_input;
             $game_id = self::resolve_game_id_from_input($game_input, $games_catalog, $games_lookup);
             $game_id = preg_replace('/[^a-zA-Z0-9_-]/', '', $game_id);
 
@@ -1061,10 +1219,10 @@ class WPGS_Lists {
      */
     public static function get_campaign_goal_modes() {
         return array(
-            'views_or_clicks' => __('Unique views OR unique clicks', 'gamequery-server-lists'),
-            'views_and_clicks' => __('Unique views AND unique clicks', 'gamequery-server-lists'),
-            'views' => __('Unique views only', 'gamequery-server-lists'),
-            'clicks' => __('Unique clicks only', 'gamequery-server-lists'),
+            'views_or_clicks' => __('Unique views OR unique clicks', 'gamequery-servers-lists'),
+            'views_and_clicks' => __('Unique views AND unique clicks', 'gamequery-servers-lists'),
+            'views' => __('Unique views only', 'gamequery-servers-lists'),
+            'clicks' => __('Unique clicks only', 'gamequery-servers-lists'),
         );
     }
 
@@ -1241,136 +1399,136 @@ class WPGS_Lists {
     public static function get_templates() {
         return array(
             'classic' => array(
-                'label' => __('Classic Table', 'gamequery-server-lists'),
-                'description' => __('Balanced default table with clear spacing.', 'gamequery-server-lists'),
+                'label' => __('Classic Table', 'gamequery-servers-lists'),
+                'description' => __('Balanced default table with clear spacing.', 'gamequery-servers-lists'),
                 'category' => 'general',
-                'category_label' => __('General', 'gamequery-server-lists'),
+                'category_label' => __('General', 'gamequery-servers-lists'),
                 'tags' => array('default', 'balanced', 'table'),
             ),
             'compact' => array(
-                'label' => __('Compact Table', 'gamequery-server-lists'),
-                'description' => __('Dense rows for long server lists.', 'gamequery-server-lists'),
+                'label' => __('Compact Table', 'gamequery-servers-lists'),
+                'description' => __('Dense rows for long server lists.', 'gamequery-servers-lists'),
                 'category' => 'utility',
-                'category_label' => __('Utility', 'gamequery-server-lists'),
+                'category_label' => __('Utility', 'gamequery-servers-lists'),
                 'tags' => array('compact', 'dense', 'list-heavy'),
             ),
             'minimal' => array(
-                'label' => __('Minimal Table', 'gamequery-server-lists'),
-                'description' => __('Soft borders and reduced visual weight.', 'gamequery-server-lists'),
+                'label' => __('Minimal Table', 'gamequery-servers-lists'),
+                'description' => __('Soft borders and reduced visual weight.', 'gamequery-servers-lists'),
                 'category' => 'clean',
-                'category_label' => __('Clean', 'gamequery-server-lists'),
+                'category_label' => __('Clean', 'gamequery-servers-lists'),
                 'tags' => array('minimal', 'light', 'simple'),
             ),
             'esports' => array(
-                'label' => __('Esports Table', 'gamequery-server-lists'),
-                'description' => __('High-contrast table for gaming pages.', 'gamequery-server-lists'),
+                'label' => __('Esports Table', 'gamequery-servers-lists'),
+                'description' => __('High-contrast table for gaming pages.', 'gamequery-servers-lists'),
                 'category' => 'gaming',
-                'category_label' => __('Gaming', 'gamequery-server-lists'),
+                'category_label' => __('Gaming', 'gamequery-servers-lists'),
                 'tags' => array('bold', 'esports', 'competitive', 'table'),
             ),
             'slate' => array(
-                'label' => __('Slate Table', 'gamequery-server-lists'),
-                'description' => __('Muted panel table with calm typography.', 'gamequery-server-lists'),
+                'label' => __('Slate Table', 'gamequery-servers-lists'),
+                'description' => __('Muted panel table with calm typography.', 'gamequery-servers-lists'),
                 'category' => 'gaming',
-                'category_label' => __('Gaming', 'gamequery-server-lists'),
+                'category_label' => __('Gaming', 'gamequery-servers-lists'),
                 'tags' => array('modern', 'slate', 'panel', 'table'),
             ),
             'terminal' => array(
-                'label' => __('Terminal Table', 'gamequery-server-lists'),
-                'description' => __('Retro command-line inspired table.', 'gamequery-server-lists'),
+                'label' => __('Terminal Table', 'gamequery-servers-lists'),
+                'description' => __('Retro command-line inspired table.', 'gamequery-servers-lists'),
                 'category' => 'retro',
-                'category_label' => __('Retro', 'gamequery-server-lists'),
+                'category_label' => __('Retro', 'gamequery-servers-lists'),
                 'tags' => array('retro', 'terminal', 'monospace', 'table'),
             ),
             'strip' => array(
-                'label' => __('Format: Horizontal Strip', 'gamequery-server-lists'),
-                'description' => __('Full-width rows with compact inline metadata.', 'gamequery-server-lists'),
+                'label' => __('Format: Horizontal Strip', 'gamequery-servers-lists'),
+                'description' => __('Full-width rows with compact inline metadata.', 'gamequery-servers-lists'),
                 'category' => 'formats',
-                'category_label' => __('Formats', 'gamequery-server-lists'),
+                'category_label' => __('Formats', 'gamequery-servers-lists'),
                 'tags' => array('layout', 'rows', 'strip', 'wide'),
             ),
             'sidebar-compact' => array(
-                'label' => __('Format: Sidebar Compact', 'gamequery-server-lists'),
-                'description' => __('Narrow stacked rows for light sidebars.', 'gamequery-server-lists'),
+                'label' => __('Format: Sidebar Compact', 'gamequery-servers-lists'),
+                'description' => __('Narrow stacked rows for light sidebars.', 'gamequery-servers-lists'),
                 'category' => 'formats',
-                'category_label' => __('Formats', 'gamequery-server-lists'),
+                'category_label' => __('Formats', 'gamequery-servers-lists'),
                 'tags' => array('layout', 'sidebar', 'compact', 'light'),
             ),
             'sidebar-dark' => array(
-                'label' => __('Format: Sidebar Dark', 'gamequery-server-lists'),
-                'description' => __('Dark compact sidebar with subtle separators.', 'gamequery-server-lists'),
+                'label' => __('Format: Sidebar Dark', 'gamequery-servers-lists'),
+                'description' => __('Dark compact sidebar with subtle separators.', 'gamequery-servers-lists'),
                 'category' => 'formats',
-                'category_label' => __('Formats', 'gamequery-server-lists'),
+                'category_label' => __('Formats', 'gamequery-servers-lists'),
                 'tags' => array('layout', 'sidebar', 'dark', 'compact'),
             ),
             'grid-cards' => array(
-                'label' => __('Format: Grid Cards', 'gamequery-server-lists'),
-                'description' => __('Two-column visual cards for wide sections.', 'gamequery-server-lists'),
+                'label' => __('Format: Grid Cards', 'gamequery-servers-lists'),
+                'description' => __('Two-column visual cards for wide sections.', 'gamequery-servers-lists'),
                 'category' => 'formats',
-                'category_label' => __('Formats', 'gamequery-server-lists'),
+                'category_label' => __('Formats', 'gamequery-servers-lists'),
                 'tags' => array('layout', 'grid', 'cards', 'visual'),
             ),
             'minimal-list' => array(
-                'label' => __('Format: Minimal List', 'gamequery-server-lists'),
-                'description' => __('Ultra-clean list with typography and dividers.', 'gamequery-server-lists'),
+                'label' => __('Format: Minimal List', 'gamequery-servers-lists'),
+                'description' => __('Ultra-clean list with typography and dividers.', 'gamequery-servers-lists'),
                 'category' => 'formats',
-                'category_label' => __('Formats', 'gamequery-server-lists'),
+                'category_label' => __('Formats', 'gamequery-servers-lists'),
                 'tags' => array('layout', 'minimal', 'list', 'clean'),
             ),
             'clean' => array(
-                'label' => __('Theme: Clean', 'gamequery-server-lists'),
-                'description' => __('Default light card style.', 'gamequery-server-lists'),
+                'label' => __('Theme: Clean', 'gamequery-servers-lists'),
+                'description' => __('Default light card style.', 'gamequery-servers-lists'),
                 'category' => 'themes',
-                'category_label' => __('Card Themes', 'gamequery-server-lists'),
+                'category_label' => __('Card Themes', 'gamequery-servers-lists'),
                 'tags' => array('cards', 'light', 'clean', 'campaign'),
             ),
             'dark' => array(
-                'label' => __('Theme: Dark', 'gamequery-server-lists'),
-                'description' => __('Dark gaming card style with subtle glow.', 'gamequery-server-lists'),
+                'label' => __('Theme: Dark', 'gamequery-servers-lists'),
+                'description' => __('Dark gaming card style with subtle glow.', 'gamequery-servers-lists'),
                 'category' => 'themes',
-                'category_label' => __('Card Themes', 'gamequery-server-lists'),
+                'category_label' => __('Card Themes', 'gamequery-servers-lists'),
                 'tags' => array('cards', 'dark', 'gaming'),
             ),
             'accent' => array(
-                'label' => __('Theme: Accent', 'gamequery-server-lists'),
-                'description' => __('Cards with accent border and vibrant pills.', 'gamequery-server-lists'),
+                'label' => __('Theme: Accent', 'gamequery-servers-lists'),
+                'description' => __('Cards with accent border and vibrant pills.', 'gamequery-servers-lists'),
                 'category' => 'themes',
-                'category_label' => __('Card Themes', 'gamequery-server-lists'),
+                'category_label' => __('Card Themes', 'gamequery-servers-lists'),
                 'tags' => array('cards', 'accent', 'vibrant'),
             ),
             'glass' => array(
-                'label' => __('Theme: Glass', 'gamequery-server-lists'),
-                'description' => __('Glassmorphism cards on a gradient wrapper.', 'gamequery-server-lists'),
+                'label' => __('Theme: Glass', 'gamequery-servers-lists'),
+                'description' => __('Glassmorphism cards on a gradient wrapper.', 'gamequery-servers-lists'),
                 'category' => 'themes',
-                'category_label' => __('Card Themes', 'gamequery-server-lists'),
+                'category_label' => __('Card Themes', 'gamequery-servers-lists'),
                 'tags' => array('cards', 'glass', 'gradient'),
             ),
             'cyber' => array(
-                'label' => __('Theme: Cyber', 'gamequery-server-lists'),
-                'description' => __('Neon cyber card style with high contrast.', 'gamequery-server-lists'),
+                'label' => __('Theme: Cyber', 'gamequery-servers-lists'),
+                'description' => __('Neon cyber card style with high contrast.', 'gamequery-servers-lists'),
                 'category' => 'themes',
-                'category_label' => __('Card Themes', 'gamequery-server-lists'),
+                'category_label' => __('Card Themes', 'gamequery-servers-lists'),
                 'tags' => array('cards', 'neon', 'cyber'),
             ),
             'warm' => array(
-                'label' => __('Theme: Warm', 'gamequery-server-lists'),
-                'description' => __('Warm minimal cards for editorial layouts.', 'gamequery-server-lists'),
+                'label' => __('Theme: Warm', 'gamequery-servers-lists'),
+                'description' => __('Warm minimal cards for editorial layouts.', 'gamequery-servers-lists'),
                 'category' => 'themes',
-                'category_label' => __('Card Themes', 'gamequery-server-lists'),
+                'category_label' => __('Card Themes', 'gamequery-servers-lists'),
                 'tags' => array('cards', 'warm', 'minimal'),
             ),
             'outlined' => array(
-                'label' => __('Theme: Outlined', 'gamequery-server-lists'),
-                'description' => __('Flat outlined card style.', 'gamequery-server-lists'),
+                'label' => __('Theme: Outlined', 'gamequery-servers-lists'),
+                'description' => __('Flat outlined card style.', 'gamequery-servers-lists'),
                 'category' => 'themes',
-                'category_label' => __('Card Themes', 'gamequery-server-lists'),
+                'category_label' => __('Card Themes', 'gamequery-servers-lists'),
                 'tags' => array('cards', 'outlined', 'flat'),
             ),
             'frosted' => array(
-                'label' => __('Theme: Frosted', 'gamequery-server-lists'),
-                'description' => __('Dark frosted rows with divider style.', 'gamequery-server-lists'),
+                'label' => __('Theme: Frosted', 'gamequery-servers-lists'),
+                'description' => __('Dark frosted rows with divider style.', 'gamequery-servers-lists'),
                 'category' => 'themes',
-                'category_label' => __('Card Themes', 'gamequery-server-lists'),
+                'category_label' => __('Card Themes', 'gamequery-servers-lists'),
                 'tags' => array('cards', 'frosted', 'dark'),
             ),
         );
@@ -1651,11 +1809,60 @@ class WPGS_Lists {
      * @return array<string, string>
      */
     private static function get_games_catalog() {
-        $cached = get_transient(self::GAMES_CATALOG_TRANSIENT);
-        if (is_array($cached) && !empty($cached)) {
-            return self::normalize_games_catalog($cached);
+        $stored = get_option(self::GAMES_CATALOG_OPTION, array());
+
+        $stored_catalog = array();
+        $stored_updated_at = 0;
+        if (is_array($stored) && isset($stored['games']) && is_array($stored['games'])) {
+            $stored_catalog = self::normalize_games_catalog($stored['games']);
+            $stored_updated_at = isset($stored['updated_at']) ? absint($stored['updated_at']) : 0;
+        } elseif (is_array($stored)) {
+            $stored_catalog = self::normalize_games_catalog($stored);
         }
 
+        $now = time();
+
+        if (!empty($stored_catalog) && $stored_updated_at <= 0) {
+            $stored_updated_at = $now;
+            update_option(
+                self::GAMES_CATALOG_OPTION,
+                array(
+                    'updated_at' => $stored_updated_at,
+                    'games' => $stored_catalog,
+                ),
+                false
+            );
+        }
+
+        $is_fresh = !empty($stored_catalog)
+            && $stored_updated_at > 0
+            && ($now - $stored_updated_at) < self::GAMES_CATALOG_REFRESH_SECONDS;
+
+        if ($is_fresh) {
+            return $stored_catalog;
+        }
+
+        $fetched_catalog = self::fetch_games_catalog_from_api();
+        if (!empty($fetched_catalog)) {
+            update_option(
+                self::GAMES_CATALOG_OPTION,
+                array(
+                    'updated_at' => $now,
+                    'games' => $fetched_catalog,
+                ),
+                false
+            );
+
+            return $fetched_catalog;
+        }
+
+        return $stored_catalog;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function fetch_games_catalog_from_api() {
         $settings = WPGS_Settings::get_settings();
         $api_base_url = isset($settings['api_base_url']) ? untrailingslashit((string) $settings['api_base_url']) : '';
 
@@ -1696,16 +1903,7 @@ class WPGS_Lists {
             }
         }
 
-        if (!empty($games_catalog)) {
-            set_transient(self::GAMES_CATALOG_TRANSIENT, $games_catalog, 12 * HOUR_IN_SECONDS);
-            return $games_catalog;
-        }
-
-        if (is_array($cached)) {
-            return self::normalize_games_catalog($cached);
-        }
-
-        return array();
+        return $games_catalog;
     }
 
     /**
@@ -1764,6 +1962,11 @@ class WPGS_Lists {
             $normalized_name = self::normalize_game_catalog_key($game_name);
             if ('' !== $normalized_name && !isset($lookup[$normalized_name])) {
                 $lookup[$normalized_name] = (string) $game_id;
+            }
+
+            $normalized_combo = self::normalize_game_catalog_key($game_name . ' (' . $game_id . ')');
+            if ('' !== $normalized_combo && !isset($lookup[$normalized_combo])) {
+                $lookup[$normalized_combo] = (string) $game_id;
             }
         }
 
