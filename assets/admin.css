@@ -1,0 +1,398 @@
+.wpgs-admin-page .wpgs-settings-summary {
+    margin: 16px 0 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.wpgs-admin-page .wpgs-summary-item {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.wpgs-admin-page .wpgs-summary-item strong {
+    color: #1d2327;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.wpgs-admin-page .wpgs-summary-item span {
+    color: #0f4b81;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.wpgs-admin-page .wpgs-last-error {
+    margin-top: 20px;
+    background: #fff;
+    border-left: 4px solid #d63638;
+    border-radius: 4px;
+    padding: 12px 14px;
+}
+
+.wpgs-groups {
+    display: grid;
+    gap: 14px;
+}
+
+.wpgs-template-browser {
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    background: #fff;
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.wpgs-template-controls {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) minmax(260px, 1fr);
+    gap: 12px;
+    align-items: center;
+    margin: 0 0 10px;
+}
+
+.wpgs-template-control {
+    min-width: 0;
+}
+
+.wpgs-template-control select,
+.wpgs-template-control input[type="search"] {
+    width: 100%;
+    max-width: none;
+}
+
+.wpgs-template-control-search {
+    justify-self: end;
+}
+
+.wpgs-template-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.wpgs-template-tag.is-active {
+    background: #0f4b81;
+    border-color: #0f4b81;
+    color: #fff;
+}
+
+.wpgs-template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+}
+
+.wpgs-template-card {
+    border: 1px solid #c3c4c7;
+    border-radius: 8px;
+    background: #fff;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    text-align: left;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.wpgs-template-card:hover {
+    border-color: #8c8f94;
+}
+
+.wpgs-template-card:focus {
+    outline: none;
+    border-color: #0f4b81;
+    box-shadow: 0 0 0 1px #0f4b81;
+}
+
+.wpgs-template-card.is-selected {
+    border-color: #0f4b81;
+    box-shadow: 0 0 0 1px #0f4b81;
+}
+
+.wpgs-template-preview {
+    width: 64px;
+    min-width: 64px;
+    border: 1px solid rgba(15, 75, 129, 0.2);
+    border-radius: 6px;
+    background: linear-gradient(145deg, #f7f9fc 0%, #e9edf3 100%);
+    padding: 6px;
+    display: grid;
+    gap: 4px;
+}
+
+.wpgs-template-preview-head,
+.wpgs-template-preview-row {
+    display: block;
+    width: 100%;
+    border-radius: 2px;
+    background: rgba(15, 75, 129, 0.35);
+}
+
+.wpgs-template-preview-head {
+    height: 8px;
+    background: rgba(15, 75, 129, 0.55);
+}
+
+.wpgs-template-preview-row {
+    height: 6px;
+}
+
+.wpgs-template-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.wpgs-template-card-title {
+    color: #1d2327;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.wpgs-template-card-category {
+    color: #0f4b81;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.wpgs-template-card-description {
+    color: #50575e;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.wpgs-template-card-tags {
+    color: #646970;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.wpgs-template-card--compact .wpgs-template-preview {
+    background: linear-gradient(145deg, #f2f8ff 0%, #dbe9fa 100%);
+}
+
+.wpgs-template-card--minimal .wpgs-template-preview {
+    background: linear-gradient(145deg, #ffffff 0%, #f3f6fa 100%);
+}
+
+.wpgs-template-card--cards .wpgs-template-preview {
+    background: linear-gradient(145deg, #ffffff 0%, #f0f4f8 100%);
+    border-color: rgba(17, 24, 39, 0.2);
+}
+
+.wpgs-template-card--clean .wpgs-template-preview {
+    background: linear-gradient(145deg, #ffffff 0%, #f0f4f8 100%);
+    border-color: rgba(17, 24, 39, 0.2);
+}
+
+.wpgs-template-card--dark .wpgs-template-preview {
+    background: linear-gradient(145deg, #0f1117 0%, #1f2937 100%);
+    border-color: rgba(148, 163, 184, 0.35);
+}
+
+.wpgs-template-card--accent .wpgs-template-preview {
+    background: linear-gradient(145deg, #ffffff 0%, #ede9fe 100%);
+    border-left: 3px solid #6366f1;
+}
+
+.wpgs-template-card--glass .wpgs-template-preview {
+    background: linear-gradient(145deg, #1e1b4b 0%, #1e293b 100%);
+    border-color: rgba(203, 213, 225, 0.4);
+}
+
+.wpgs-template-card--cyber .wpgs-template-preview {
+    background: linear-gradient(145deg, #020817 0%, #0f172a 100%);
+    border-color: rgba(0, 255, 200, 0.35);
+}
+
+.wpgs-template-card--warm .wpgs-template-preview {
+    background: linear-gradient(145deg, #fffbf7 0%, #f4ede4 100%);
+    border-color: rgba(124, 92, 66, 0.28);
+}
+
+.wpgs-template-card--outlined .wpgs-template-preview {
+    background: linear-gradient(145deg, #ffffff 0%, #f9fafb 100%);
+    border: 2px solid #d1d5db;
+}
+
+.wpgs-template-card--frosted .wpgs-template-preview {
+    background: linear-gradient(145deg, #111827 0%, #1f2937 100%);
+    border-color: rgba(148, 163, 184, 0.35);
+}
+
+.wpgs-template-card--esports .wpgs-template-preview {
+    background: linear-gradient(145deg, #e9f3ff 0%, #d6e9ff 60%, #c7dfff 100%);
+}
+
+.wpgs-template-card--slate .wpgs-template-preview {
+    background: linear-gradient(145deg, #e8edf3 0%, #d8e0ea 100%);
+}
+
+.wpgs-template-card--terminal .wpgs-template-preview {
+    background: linear-gradient(145deg, #edf7ed 0%, #d7edd7 100%);
+    border-color: rgba(31, 124, 65, 0.35);
+}
+
+.wpgs-template-card--strip .wpgs-template-preview {
+    background: linear-gradient(145deg, #f8fbff 0%, #e8f0fb 100%);
+}
+
+.wpgs-template-card--sidebar-compact .wpgs-template-preview {
+    background: linear-gradient(145deg, #ffffff 0%, #f2f6fa 100%);
+}
+
+.wpgs-template-card--sidebar-dark .wpgs-template-preview {
+    background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+    border-color: rgba(148, 163, 184, 0.35);
+}
+
+.wpgs-template-card--grid-cards .wpgs-template-preview {
+    background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.wpgs-template-card--minimal-list .wpgs-template-preview {
+    background: linear-gradient(145deg, #ffffff 0%, #eef2f7 100%);
+}
+
+.wpgs-template-empty {
+    margin: 8px 2px 0;
+}
+
+.wpgs-template-live-preview {
+    margin-top: 14px;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    background: #f8fafc;
+    padding: 10px;
+}
+
+.wpgs-template-live-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.wpgs-template-live-head strong {
+    font-size: 12px;
+    color: #1d2327;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.wpgs-template-live-head span {
+    font-size: 12px;
+    color: #0f4b81;
+    font-weight: 600;
+}
+
+.wpgs-template-live-note {
+    margin: 0 0 8px;
+    color: #646970;
+}
+
+.wpgs-template-live-preview .wpgs-list {
+    margin: 0;
+}
+
+.wpgs-template-preview-pane {
+    display: none;
+}
+
+.wpgs-template-preview-pane.is-active {
+    display: block;
+}
+
+.wpgs-template-live-card-shell {
+    border-radius: 8px;
+}
+
+.wpgs-template-preview-pane[data-preview-pane="sidebar-compact"] .wpgs-list,
+.wpgs-template-preview-pane[data-preview-pane="sidebar-dark"] .wpgs-layout-sidebar-dark {
+    max-width: 360px;
+}
+
+.wpgs-template-preview-pane[data-preview-pane="table"] .wpgs-table {
+    min-width: 0;
+}
+
+@media (max-width: 782px) {
+    .wpgs-template-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .wpgs-template-control-search {
+        justify-self: stretch;
+    }
+}
+
+.wpgs-group-row {
+    border: 1px solid #dcdcde;
+    background: #fff;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.wpgs-group-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.wpgs-display-options {
+    display: grid;
+    gap: 8px;
+}
+
+.wpgs-campaign-options {
+    display: grid;
+    gap: 10px;
+}
+
+.wpgs-campaign-options p {
+    margin: 0;
+}
+
+.wpgs-campaign-options input[type="number"],
+.wpgs-campaign-options select {
+    width: 100%;
+}
+
+.wpgs-campaign-state {
+    margin: 0;
+}
+
+.wpgs-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wpgs-pill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.wpgs-pill-warning {
+    background: #fff4e5;
+    color: #8a4b00;
+    border: 1px solid #f0c36d;
+}
