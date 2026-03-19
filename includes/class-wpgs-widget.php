@@ -87,7 +87,12 @@ class WPGS_Widget extends WP_Widget {
         echo '<select class="widefat" id="' . esc_attr($list_field_id) . '" name="' . esc_attr($list_field_name) . '">';
         echo '<option value="0">' . esc_html__('Select a list...', 'gamequery-server-lists') . '</option>';
         foreach ($lists as $list_post) {
-            $name = '' !== trim((string) $list_post->post_title) ? (string) $list_post->post_title : sprintf(__('List #%d', 'gamequery-server-lists'), absint($list_post->ID));
+            $name = '' !== trim((string) $list_post->post_title) ? (string) $list_post->post_title : '';
+            if ('' === $name) {
+                /* translators: %d: list post ID. */
+                $name = sprintf(__('List #%d', 'gamequery-server-lists'), absint($list_post->ID));
+            }
+
             echo '<option value="' . esc_attr((string) absint($list_post->ID)) . '"' . selected($list_id, absint($list_post->ID), false) . '>' . esc_html($name) . '</option>';
         }
         echo '</select>';

@@ -60,3 +60,8 @@ or
 - View counters are tracked per page load where a list is rendered.
 - Click counters are tracked when visitors click rows in a rendered server table.
 - Unique counters are deduplicated per visitor for 24 hours.
+
+## License
+
+This project is licensed under GNU GPL v2 or later (`GPL-2.0-or-later`).
+See `LICENSE` for the full text.

@@ -3,7 +3,7 @@ Contributors: pbdaemon
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,6 +26,11 @@ It includes list templates, background cache refresh via WP-Cron, and built-in l
 4. Create lists in `WPGS -> Lists`.
 
 == Changelog ==
+
+= 0.1.2 =
+* Add widget support and shortcode rendering improvements.
+* Add campaign goal controls and copy-IP display option.
+* Improve cache-busting for admin/frontend assets.
 
 = 0.1.1 =
 * Improve cache-busting for admin/frontend assets.

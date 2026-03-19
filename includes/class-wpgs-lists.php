@@ -717,18 +717,21 @@ class WPGS_Lists {
         $target_summary = '';
         if ('views' === $goal_mode) {
             $target_summary = sprintf(
+                /* translators: 1: current unique views, 2: target unique views. */
                 __('Target: %1$s / %2$s unique views', 'gamequery-server-lists'),
                 number_format_i18n($views_unique),
                 number_format_i18n($views_target)
             );
         } elseif ('clicks' === $goal_mode) {
             $target_summary = sprintf(
+                /* translators: 1: current unique clicks, 2: target unique clicks. */
                 __('Target: %1$s / %2$s unique clicks', 'gamequery-server-lists'),
                 number_format_i18n($clicks_unique),
                 number_format_i18n($clicks_target)
             );
         } elseif ('views_and_clicks' === $goal_mode) {
             $target_summary = sprintf(
+                /* translators: 1: current unique views, 2: target unique views, 3: current unique clicks, 4: target unique clicks. */
                 __('Target: views %1$s / %2$s and clicks %3$s / %4$s', 'gamequery-server-lists'),
                 number_format_i18n($views_unique),
                 number_format_i18n($views_target),
@@ -737,6 +740,7 @@ class WPGS_Lists {
             );
         } else {
             $target_summary = sprintf(
+                /* translators: 1: current unique views, 2: target unique views, 3: current unique clicks, 4: target unique clicks. */
                 __('Target: views %1$s / %2$s or clicks %3$s / %4$s', 'gamequery-server-lists'),
                 number_format_i18n($views_unique),
                 number_format_i18n($views_target),
@@ -778,7 +782,9 @@ class WPGS_Lists {
         echo '<p class="wpgs-campaign-state"><strong>' . esc_html__('Status:', 'gamequery-server-lists') . '</strong> ' . esc_html($status_label) . '</p>';
         echo '<p class="description">' . esc_html($target_summary) . '</p>';
         if ($is_ended && '' !== $ended_at) {
-            echo '<p class="description">' . esc_html(sprintf(__('Ended at (UTC): %s', 'gamequery-server-lists'), $ended_at)) . '</p>';
+            /* translators: %s: campaign end date and time in UTC. */
+            $ended_at_message = sprintf(__('Ended at (UTC): %s', 'gamequery-server-lists'), $ended_at);
+            echo '<p class="description">' . esc_html($ended_at_message) . '</p>';
         }
         echo '<p class="description">' . esc_html__('Campaign goals use unique stats from WPGS tracking.', 'gamequery-server-lists') . '</p>';
         echo '</div>';
