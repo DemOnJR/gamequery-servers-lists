@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 
 class WPGS_API_Client {
     const CACHE_INDEX_OPTION = 'wpgs_cache_index';
+    const MAX_SERVERS_PER_REQUEST = 1000;
 
     /**
      * @param int $list_id
@@ -76,20 +77,62 @@ class WPGS_API_Client {
             return $result;
         }
 
+        return $this->store_list_cache_payload(
+            $list_id,
+            isset($result['data']) && is_array($result['data']) ? $result['data'] : array(),
+            isset($result['status_code']) ? (int) $result['status_code'] : 200
+        );
+    }
+
+    /**
+     * @param int $list_id
+     * @param array<string, mixed> $payload
+     * @param int $status_code
+     * @return array<string, mixed>
+     */
+    public function store_list_cache_payload($list_id, $payload, $status_code = 200) {
+        $list_id = absint($list_id);
+        if ($list_id <= 0) {
+            return $this->build_error_result('invalid_list_id', 'Invalid list ID provided for cache storage.', 0);
+        }
+
+        if (!is_array($payload)) {
+            $payload = array();
+        }
+
         $cache_key = $this->get_cache_key($list_id);
         $ttl = WPGS_Settings::get_effective_cache_ttl();
 
-        set_transient($cache_key, $result['data'], $ttl);
+        set_transient($cache_key, $payload, $ttl);
         self::register_cache_key($list_id, $cache_key);
         WPGS_Settings::clear_last_api_error();
 
         return array(
             'success' => true,
-            'status_code' => isset($result['status_code']) ? (int) $result['status_code'] : 200,
-            'data' => $result['data'],
+            'status_code' => (int) $status_code,
+            'data' => $payload,
             'cache_key' => $cache_key,
             'cache_ttl' => $ttl,
         );
+    }
+
+    /**
+     * @param array<int, mixed> $groups
+     * @param array<string, mixed> $extra
+     * @return array<string, mixed>
+     */
+    public function fetch_payload_for_groups($groups, $extra = array()) {
+        $payload_groups = $this->normalize_groups_for_payload($groups);
+        if (empty($payload_groups)) {
+            return $this->build_error_result(
+                'empty_groups',
+                'The payload has no valid game groups or servers.',
+                0,
+                is_array($extra) ? $extra : array()
+            );
+        }
+
+        return $this->request_payload_groups($payload_groups, is_array($extra) ? $extra : array());
     }
 
     /**
@@ -98,34 +141,9 @@ class WPGS_API_Client {
      */
     private function request_list_payload($list_id) {
         $list_id = absint($list_id);
-        $settings = WPGS_Settings::get_settings();
-
-        $email = isset($settings['email']) ? trim((string) $settings['email']) : '';
-        $token = isset($settings['token']) ? trim((string) $settings['token']) : '';
-        $plan = isset($settings['plan']) ? WPGS_Settings::normalize_plan((string) $settings['plan']) : 'FREE';
-        $api_base_url = isset($settings['api_base_url']) ? untrailingslashit((string) $settings['api_base_url']) : '';
-
-        if (empty($email) || empty($token)) {
-            return $this->build_error_result(
-                'missing_credentials',
-                'WPGS settings are missing API credentials.',
-                0,
-                array('list_id' => $list_id)
-            );
-        }
-
-        if (empty($api_base_url)) {
-            return $this->build_error_result(
-                'missing_api_base_url',
-                'WPGS settings are missing API base URL.',
-                0,
-                array('list_id' => $list_id)
-            );
-        }
 
         $groups = WPGS_Lists::get_groups($list_id);
         $payload_groups = $this->normalize_groups_for_payload($groups);
-        $server_count = WPGS_Lists::count_servers($payload_groups);
 
         if (empty($payload_groups)) {
             return $this->build_error_result(
@@ -136,7 +154,8 @@ class WPGS_API_Client {
             );
         }
 
-        if ($server_count > 1000) {
+        $server_count = WPGS_Lists::count_servers($payload_groups);
+        if ($server_count > self::MAX_SERVERS_PER_REQUEST) {
             return $this->build_error_result(
                 'server_limit_exceeded',
                 'This list exceeds the 1000 servers per request limit.',
@@ -148,6 +167,96 @@ class WPGS_API_Client {
             );
         }
 
+        return $this->request_payload_groups($payload_groups, array('list_id' => $list_id));
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $payload_groups
+     * @param array<string, mixed> $extra
+     * @return array<string, mixed>
+     */
+    private function request_payload_groups($payload_groups, $extra = array()) {
+        $settings = WPGS_Settings::get_settings();
+
+        $email = isset($settings['email']) ? trim((string) $settings['email']) : '';
+        $token = isset($settings['token']) ? trim((string) $settings['token']) : '';
+        $plan = isset($settings['plan']) ? WPGS_Settings::normalize_plan((string) $settings['plan']) : 'FREE';
+        $api_base_url = isset($settings['api_base_url']) ? untrailingslashit((string) $settings['api_base_url']) : '';
+        $extra = is_array($extra) ? $extra : array();
+
+        if (empty($email) || empty($token)) {
+            return $this->build_error_result(
+                'missing_credentials',
+                'WPGS settings are missing API credentials.',
+                0,
+                $extra
+            );
+        }
+
+        if (empty($api_base_url)) {
+            return $this->build_error_result(
+                'missing_api_base_url',
+                'WPGS settings are missing API base URL.',
+                0,
+                $extra
+            );
+        }
+
+        $server_count = WPGS_Lists::count_servers($payload_groups);
+        if ($server_count > self::MAX_SERVERS_PER_REQUEST) {
+            return $this->build_error_result(
+                'server_limit_exceeded',
+                'This payload exceeds the 1000 servers per request limit.',
+                0,
+                array_merge($extra, array('server_count' => $server_count))
+            );
+        }
+
+        $result = $this->perform_payload_request(
+            $api_base_url,
+            $email,
+            $token,
+            $plan,
+            $payload_groups,
+            $extra
+        );
+
+        $status_code = isset($result['status_code']) ? (int) $result['status_code'] : 0;
+        if (empty($result['success']) && 401 === $status_code && in_array($plan, array('FREE', 'PRO'), true)) {
+            $fallback_plan = 'FREE' === $plan ? 'PRO' : 'FREE';
+            $fallback_result = $this->perform_payload_request(
+                $api_base_url,
+                $email,
+                $token,
+                $fallback_plan,
+                $payload_groups,
+                $extra
+            );
+
+            if (!empty($fallback_result['success'])) {
+                $this->sync_settings_plan($fallback_plan);
+                return $fallback_result;
+            }
+
+            $fallback_status_code = isset($fallback_result['status_code']) ? (int) $fallback_result['status_code'] : 0;
+            if (401 !== $fallback_status_code) {
+                return $fallback_result;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $api_base_url
+     * @param string $email
+     * @param string $token
+     * @param string $plan
+     * @param array<int, array<string, mixed>> $payload_groups
+     * @param array<string, mixed> $extra
+     * @return array<string, mixed>
+     */
+    private function perform_payload_request($api_base_url, $email, $token, $plan, $payload_groups, $extra = array()) {
         $response = wp_remote_post(
             $api_base_url . '/post/fetch',
             array(
@@ -171,7 +280,7 @@ class WPGS_API_Client {
                 'request_failed',
                 $response->get_error_message(),
                 0,
-                array('list_id' => $list_id)
+                $extra
             );
         }
 
@@ -189,7 +298,7 @@ class WPGS_API_Client {
                 'quota_exceeded',
                 $message,
                 $status_code,
-                array('list_id' => $list_id)
+                $extra
             );
         }
 
@@ -203,7 +312,7 @@ class WPGS_API_Client {
                 'api_http_error',
                 $message,
                 $status_code,
-                array('list_id' => $list_id)
+                $extra
             );
         }
 
@@ -212,7 +321,7 @@ class WPGS_API_Client {
                 'invalid_response',
                 'GameQuery API returned invalid JSON.',
                 $status_code,
-                array('list_id' => $list_id)
+                $extra
             );
         }
 
@@ -221,6 +330,22 @@ class WPGS_API_Client {
             'status_code' => $status_code,
             'data' => $decoded,
         );
+    }
+
+    /**
+     * @param string $plan
+     */
+    private function sync_settings_plan($plan) {
+        $normalized_plan = WPGS_Settings::normalize_plan((string) $plan);
+        $settings = WPGS_Settings::get_settings();
+        $current_plan = isset($settings['plan']) ? WPGS_Settings::normalize_plan((string) $settings['plan']) : 'FREE';
+
+        if ($current_plan === $normalized_plan) {
+            return;
+        }
+
+        $settings['plan'] = $normalized_plan;
+        WPGS_Settings::update_settings($settings);
     }
 
     /**

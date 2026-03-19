@@ -117,28 +117,41 @@ class WPGS_Lists {
         if ('wpgs_views' === $column) {
             $total = (int) get_post_meta($post_id, WPGS_Stats::META_VIEWS_TOTAL, true);
             $unique = (int) get_post_meta($post_id, WPGS_Stats::META_VIEWS_UNIQUE, true);
-            $this->render_stats_cell($total, $unique);
+            $this->render_stats_cell($post_id, $total, $unique);
             return;
         }
 
         if ('wpgs_clicks' === $column) {
             $total = (int) get_post_meta($post_id, WPGS_Stats::META_CLICKS_TOTAL, true);
             $unique = (int) get_post_meta($post_id, WPGS_Stats::META_CLICKS_UNIQUE, true);
-            $this->render_stats_cell($total, $unique);
+            $this->render_stats_cell($post_id, $total, $unique);
         }
     }
 
     /**
+     * @param int $post_id
      * @param int $total
      * @param int $unique
      */
-    private function render_stats_cell($total, $unique) {
+    private function render_stats_cell($post_id, $total, $unique) {
+        $post_id = absint($post_id);
         $total = max(0, (int) $total);
         $unique = max(0, (int) $unique);
 
+        $stats_url = add_query_arg(
+            array(
+                'post_type' => self::POST_TYPE,
+                'page' => 'wpgs-stats',
+                'list_id' => $post_id,
+            ),
+            admin_url('edit.php')
+        );
+
+        echo '<a href="' . esc_url($stats_url) . '" class="wpgs-stats-cell-link">';
         echo '<strong>' . esc_html((string) $total) . '</strong>';
         echo '<br />';
         echo '<span class="description">' . esc_html__('Unique:', 'gamequery-server-lists') . ' ' . esc_html((string) $unique) . '</span>';
+        echo '</a>';
     }
 
     /**

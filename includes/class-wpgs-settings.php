@@ -16,6 +16,7 @@ class WPGS_Settings {
             'email' => '',
             'token' => '',
             'plan' => 'FREE',
+            'account_base_url' => 'https://gamequery.dev',
             'api_base_url' => 'https://api.gamequery.dev/v1',
             'cache_ttl' => 60,
         );
@@ -59,6 +60,12 @@ class WPGS_Settings {
         $token = isset($raw['token']) ? sanitize_text_field((string) $raw['token']) : '';
         $plan = isset($raw['plan']) ? self::normalize_plan((string) $raw['plan']) : 'FREE';
 
+        $account_base_url = isset($raw['account_base_url']) ? esc_url_raw((string) $raw['account_base_url']) : $defaults['account_base_url'];
+        $account_base_url = untrailingslashit((string) $account_base_url);
+        if (empty($account_base_url)) {
+            $account_base_url = (string) $defaults['account_base_url'];
+        }
+
         $api_base_url = isset($raw['api_base_url']) ? esc_url_raw((string) $raw['api_base_url']) : $defaults['api_base_url'];
         $api_base_url = untrailingslashit((string) $api_base_url);
         if (empty($api_base_url)) {
@@ -74,6 +81,7 @@ class WPGS_Settings {
             'email' => $email,
             'token' => $token,
             'plan' => $plan,
+            'account_base_url' => $account_base_url,
             'api_base_url' => $api_base_url,
             'cache_ttl' => $cache_ttl,
         );
@@ -151,6 +159,23 @@ class WPGS_Settings {
     }
 
     /**
+     * @return string
+     */
+    public static function get_account_base_url() {
+        $settings = self::get_settings();
+        $base_url = isset($settings['account_base_url']) ? untrailingslashit((string) $settings['account_base_url']) : 'https://gamequery.dev';
+        if (empty($base_url)) {
+            $base_url = 'https://gamequery.dev';
+        }
+
+        $filtered = apply_filters('wpgs_account_base_url', $base_url, $settings);
+        $filtered = esc_url_raw((string) $filtered);
+        $filtered = untrailingslashit((string) $filtered);
+
+        return !empty($filtered) ? $filtered : $base_url;
+    }
+
+    /**
      * @return int
      */
     public static function get_published_list_count() {
@@ -163,17 +188,77 @@ class WPGS_Settings {
     }
 
     /**
-     * @return float
+     * @return int
      */
-    public static function estimate_daily_calls() {
-        $ttl = self::get_cache_ttl_setting();
-        $list_count = self::get_published_list_count();
+    public static function get_published_server_count() {
+        $list_ids = get_posts(
+            array(
+                'post_type' => WPGS_Lists::POST_TYPE,
+                'post_status' => 'publish',
+                'numberposts' => -1,
+                'fields' => 'ids',
+                'no_found_rows' => true,
+            )
+        );
 
-        if ($ttl <= 0 || $list_count <= 0) {
+        if (!is_array($list_ids) || empty($list_ids)) {
             return 0;
         }
 
-        return (86400 / $ttl) * $list_count;
+        $unique_servers = array();
+        foreach ($list_ids as $list_id) {
+            $groups = WPGS_Lists::get_groups((int) $list_id);
+            foreach ($groups as $group) {
+                if (!is_array($group) || empty($group['game_id']) || empty($group['servers']) || !is_array($group['servers'])) {
+                    continue;
+                }
+
+                $game_id = preg_replace('/[^a-zA-Z0-9_-]/', '', sanitize_text_field((string) $group['game_id']));
+                if ('' === $game_id) {
+                    continue;
+                }
+
+                foreach ($group['servers'] as $raw_server) {
+                    $server = trim((string) $raw_server);
+                    if ('' === $server || !WPGS_Lists::is_valid_server_address($server)) {
+                        continue;
+                    }
+
+                    $unique_servers[$game_id . '|' . $server] = true;
+                }
+            }
+        }
+
+        return count($unique_servers);
+    }
+
+    /**
+     * @return int
+     */
+    public static function estimate_calls_per_refresh_cycle() {
+        $server_count = self::get_published_server_count();
+        if ($server_count <= 0) {
+            return 0;
+        }
+
+        $max_servers = class_exists('WPGS_API_Client') ? (int) WPGS_API_Client::MAX_SERVERS_PER_REQUEST : 1000;
+        $max_servers = max(1, $max_servers);
+
+        return (int) ceil($server_count / $max_servers);
+    }
+
+    /**
+     * @return float
+     */
+    public static function estimate_daily_calls() {
+        $ttl = self::get_effective_cache_ttl();
+        $calls_per_cycle = self::estimate_calls_per_refresh_cycle();
+
+        if ($ttl <= 0 || $calls_per_cycle <= 0) {
+            return 0;
+        }
+
+        return (86400 / $ttl) * $calls_per_cycle;
     }
 
     /**

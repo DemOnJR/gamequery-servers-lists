@@ -3,7 +3,7 @@
  * Plugin Name: GameQuery Server Lists
  * Plugin URI: https://gamequery.dev
  * Description: Build reusable GameQuery-powered server lists and embed them with shortcodes.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: pbdaemon
  * Author URI: https://profiles.wordpress.org/pbdaemon/
  * Requires at least: 6.0
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 define('WPGS_PLUGIN_FILE', __FILE__);
 define('WPGS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WPGS_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('WPGS_VERSION', '0.1.2');
+define('WPGS_VERSION', '0.1.3');
 
 require_once WPGS_PLUGIN_DIR . 'includes/class-wpgs-settings.php';
 require_once WPGS_PLUGIN_DIR . 'includes/class-wpgs-api-client.php';

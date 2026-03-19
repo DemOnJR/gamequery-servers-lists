@@ -6,9 +6,11 @@ WPGS is a WordPress plugin for embedding GameQuery API server lists with shortco
 
 - Sidebar top-level admin entry: `WPGS`
 - Global settings:
+  - One-click secure account connect (popup key selector)
   - API Email
   - API Token
-  - Plan (`FREE` / `PRO`)
+  - Plan (auto-detected from connected API key)
+  - Account Base URL (advanced)
   - API Base URL
   - Cache TTL
 - Lists managed as a native-style custom post type (`WPGS Lists`)
@@ -23,8 +25,18 @@ WPGS is a WordPress plugin for embedding GameQuery API server lists with shortco
   - `[gamequery id="123"]`
 - Built-in analytics for each list (views/clicks + unique counts)
 - WPGS Stats page with per-list performance table
+  - Status filter + search
+  - Row actions (open report, edit, trash)
+  - Bulk move to trash
 - WP-Cron background refresh + transient caching
 - Quota-aware warnings for FREE plan
+- Connect security hardening:
+  - Ownership confirmation before approving a plugin connection
+  - Rate-limited connect session creation, polling, and code exchange
+  - Connection audit events + security notification/email on completed connect
+- Plan safety hardening:
+  - Plan cannot be manually changed in settings
+  - If existing settings have a stale plan, the plugin auto-detects and fixes it on API fetch
 
 ## Install (repo-local)
 
@@ -36,7 +48,7 @@ Copy/sync the plugin folder into your WordPress plugins directory, then activate
 
 ## Usage
 
-1. Open **WPGS -> Settings** and set your API credentials.
+1. Open **WPGS -> Settings** and click **Connect with GameQuery** to select an API key (manual credentials are still available as fallback).
 2. Open **WPGS -> Lists** and create a list.
 3. Add one or more groups (`game_id` + servers).
 4. Publish the list.

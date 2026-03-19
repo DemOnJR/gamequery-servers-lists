@@ -28,12 +28,266 @@
     font-weight: 600;
 }
 
+.wpgs-admin-page .wpgs-summary-item .wpgs-summary-text {
+    color: #1d2327;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.wpgs-nav-tabs {
+    margin-bottom: 16px;
+}
+
+.wpgs-log-note {
+    margin: 8px 0 14px;
+}
+
+.wpgs-log-table {
+    margin-top: 14px;
+}
+
+.wpgs-log-status {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.6;
+    border: 1px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.wpgs-log-status-success {
+    background: #ecfdf3;
+    color: #106838;
+    border-color: #86efac;
+}
+
+.wpgs-log-status-partial {
+    background: #fffbeb;
+    color: #854d0e;
+    border-color: #fcd34d;
+}
+
+.wpgs-log-status-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fca5a5;
+}
+
+.wpgs-log-status-noop {
+    background: #f4f4f5;
+    color: #3f3f46;
+    border-color: #d4d4d8;
+}
+
+.wpgs-stats-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.wpgs-stats-toolbar h1 {
+    margin-bottom: 4px;
+}
+
+.wpgs-stats-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.wpgs-stats-filter-toolbar {
+    margin: 0 0 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.wpgs-stats-filter-toolbar select,
+.wpgs-stats-filter-toolbar input[type="search"] {
+    max-width: 280px;
+}
+
+.wpgs-stats-bulk-form {
+    margin-top: 12px;
+}
+
+.wpgs-stats-bulk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+.wpgs-stats-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.wpgs-button-danger {
+    color: #b32d2e;
+    border-color: #d63638;
+}
+
+.wpgs-button-danger:hover,
+.wpgs-button-danger:focus {
+    color: #fff;
+    border-color: #b32d2e;
+    background: #b32d2e;
+}
+
+.wpgs-stats-secondary {
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+.wpgs-stats-cell-link {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.wpgs-stats-graphs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px;
+    margin: 14px 0;
+}
+
+.wpgs-stats-graph-card {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.wpgs-stats-graph-card h2 {
+    margin: 0 0 10px;
+    font-size: 14px;
+}
+
+.wpgs-stats-progress {
+    margin-bottom: 12px;
+}
+
+.wpgs-stats-progress:last-child {
+    margin-bottom: 0;
+}
+
+.wpgs-stats-progress-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.wpgs-stats-progress-track {
+    height: 10px;
+    border-radius: 999px;
+    background: #edf1f5;
+    overflow: hidden;
+}
+
+.wpgs-stats-progress-track span {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+}
+
+.wpgs-stats-detail-table {
+    margin-top: 8px;
+}
+
+.wpgs-stats-detail-table th {
+    width: 220px;
+}
+
 .wpgs-admin-page .wpgs-last-error {
     margin-top: 20px;
     background: #fff;
     border-left: 4px solid #d63638;
     border-radius: 4px;
     padding: 12px 14px;
+}
+
+.wpgs-admin-page .wpgs-connect-panel {
+    margin: 0 0 20px;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-left: 4px solid #0f4b81;
+    border-radius: 6px;
+    padding: 14px 16px;
+}
+
+.wpgs-admin-page .wpgs-connect-panel h2 {
+    margin: 0 0 8px;
+}
+
+.wpgs-admin-page .wpgs-connect-current {
+    margin: 10px 0 12px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.wpgs-admin-page .wpgs-connect-current.is-connected {
+    font-size: 18px;
+    line-height: 1.35;
+    color: #0a5f2f;
+    background: #edf9f0;
+    border: 1px solid #b8dfc4;
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+
+.wpgs-admin-page .wpgs-connect-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.wpgs-admin-page .wpgs-connect-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid #b8dfc4;
+    background: #edf9f0;
+    color: #0a7a2f;
+    font-weight: 600;
+}
+
+.wpgs-admin-page .wpgs-connect-badge .dashicons {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+}
+
+.wpgs-admin-page #wpgs-connect-status {
+    margin: 10px 0 0;
+}
+
+.wpgs-admin-page #wpgs-connect-status.is-info {
+    color: #0f4b81;
+}
+
+.wpgs-admin-page #wpgs-connect-status.is-success {
+    color: #0a7a2f;
+}
+
+.wpgs-admin-page #wpgs-connect-status.is-error {
+    color: #b32d2e;
 }
 
 .wpgs-groups {
@@ -329,6 +583,10 @@
 }
 
 @media (max-width: 782px) {
+    .wpgs-stats-toolbar {
+        flex-direction: column;
+    }
+
     .wpgs-template-controls {
         grid-template-columns: 1fr;
     }
