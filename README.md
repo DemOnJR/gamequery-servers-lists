@@ -1,42 +1,62 @@
 # GameQuery Server Lists
 
-WPGS is a WordPress plugin for embedding GameQuery API server lists with shortcodes.
+A WordPress plugin for building, embedding, and promoting GameQuery-powered game server lists with shortcodes, templates, and analytics.
 
-## Features (MVP)
+![GameQuery Server Lists main preview](https://i.imgur.com/q8doEum.png)
 
-- Sidebar top-level admin entry: `WPGS`
-- Global settings:
-  - One-click secure account connect (popup key selector)
-  - API Email
-  - API Token
-  - Plan (auto-detected from connected API key)
-  - Account Base URL (advanced)
-  - API Base URL
-  - Cache TTL
-- Lists managed as a native-style custom post type (`WPGS Lists`)
-- Multi-game list support (`game_id` + `servers[]` groups)
-- Dedicated visual template card above Server Groups (search + category + tags filters)
-- Live template preview in admin (updates immediately when selecting a template)
-- Per-list templates:
-  - Table styles: `Classic`, `Compact`, `Minimal`, `Esports Table`, `Slate Table`, `Terminal Table`
-  - Card themes: `Clean`, `Dark`, `Accent`, `Glass`, `Cyber`, `Warm`, `Outlined`, `Frosted`
-- Shortcodes:
-  - `[gamequery_123]`
-  - `[gamequery id="123"]`
-- Built-in analytics for each list (views/clicks + unique counts)
-- WPGS Stats page with per-list performance table
-  - Status filter + search
-  - Row actions (open report, edit, trash)
-  - Bulk move to trash
-- WP-Cron background refresh + transient caching
-- Quota-aware warnings for FREE plan
-- Connect security hardening:
-  - Ownership confirmation before approving a plugin connection
-  - Rate-limited connect session creation, polling, and code exchange
-  - Connection audit events + security notification/email on completed connect
-- Plan safety hardening:
-  - Plan cannot be manually changed in settings
-  - If existing settings have a stale plan, the plugin auto-detects and fixes it on API fetch
+## Gallery
+
+![GameQuery Server Lists screenshot 1](https://i.imgur.com/rw32f1F.png)
+![GameQuery Server Lists screenshot 2](https://i.imgur.com/GzvvM71.png)
+![GameQuery Server Lists screenshot 3](https://i.imgur.com/oPiS3y3.png)
+![GameQuery Server Lists screenshot 4](https://i.imgur.com/qnyk2EL.png)
+![GameQuery Server Lists screenshot 5](https://i.imgur.com/inU5Qwv.png)
+![GameQuery Server Lists screenshot 6](https://i.imgur.com/2rbq9Ib.png)
+![GameQuery Server Lists screenshot 7](https://i.imgur.com/CCMXs6B.png)
+![GameQuery Server Lists screenshot 8](https://i.imgur.com/s5P0efR.png)
+![GameQuery Server Lists screenshot 9](https://i.imgur.com/gB0aEbW.png)
+![GameQuery Server Lists screenshot 10](https://i.imgur.com/19Z4CTx.png)
+![GameQuery Server Lists screenshot 11](https://i.imgur.com/uoW76jt.png)
+![GameQuery Server Lists screenshot 12](https://i.imgur.com/fpMFOJG.png)
+
+## Description
+
+GameQuery Server Lists helps gaming blogs and community websites publish multiplayer server lists in minutes.
+Site owners can connect their GameQuery account, organize servers by game, and embed lists anywhere in WordPress with shortcodes.
+
+The plugin includes secure one-click account connection, multi-game list support, visual templates, WP-Cron background refresh, and built-in list analytics for views and clicks.
+
+## Key Features
+
+- One-click secure GameQuery account connection with popup API key selection
+- Multi-game server groups per list (`game_id` + `servers[]`)
+- Built-in templates with live admin preview before publishing
+- Flexible shortcodes: `[gamequery_123]` and `[gamequery id="123"]`
+- Built-in analytics (views, clicks, unique counts) with dedicated stats page
+- Campaign goal automation to auto-hide lists after click/view limits are reached
+- WP-Cron background refresh with transient caching
+- Quota-aware guidance for FREE plan usage
+
+## Built With
+
+- WordPress Plugin API
+- PHP 7.4+
+- JavaScript (WordPress admin UI)
+- GameQuery API
+- WP-Cron and Transients API
+
+## Quick Start
+
+1. Copy this plugin into your WordPress plugins directory: `wp-content/plugins/gamequery-servers-lists`.
+2. Activate the plugin from **WP Admin -> Plugins**.
+3. Open **WPGS -> Settings** and connect your GameQuery account.
+4. Create a list in **WPGS -> Lists**, add server groups, then publish.
+5. Embed your list in posts/pages with one of these shortcodes:
+
+```text
+[gamequery_123]
+[gamequery id="123"]
+```
 
 ## Install (repo-local)
 
@@ -72,6 +92,18 @@ or
 - View counters are tracked per page load where a list is rendered.
 - Click counters are tracked when visitors click rows in a rendered server table.
 - Unique counters are deduplicated per visitor for 24 hours.
+
+## Community Market Checklist
+
+- [x] Public repository (not archived)
+- [x] `README.md` present and descriptive
+- [x] `CHANGELOG.md` present with version sections
+- [x] SPDX license file present (`GPL-2.0-or-later`)
+- [x] Cover and gallery images included in `README.md`
+
+## Changelog
+
+See `CHANGELOG.md`.
 
 ## License
 
