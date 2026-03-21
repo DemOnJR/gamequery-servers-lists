@@ -45,6 +45,16 @@ The plugin includes secure one-click account connection, multi-game list support
 - GameQuery API
 - WP-Cron and Transients API
 
+## Preview URL
+
+- https://gamequery.dev
+
+## System Requirements
+
+- WordPress 6.0+
+- PHP 7.4+
+- Active GameQuery account and API key
+
 ## Quick Start
 
 1. Copy this plugin into your WordPress plugins directory: `wp-content/plugins/gamequery-servers-lists`.
@@ -97,9 +107,11 @@ or
 
 - [x] Public repository (not archived)
 - [x] `README.md` present and descriptive
+- [x] Preview URL included in `README.md`
+- [x] System requirements listed in `README.md`
 - [x] `CHANGELOG.md` present with version sections
-- [x] SPDX license file present (`GPL-2.0-or-later`)
-- [x] Cover and gallery images included in `README.md`
+- [x] SPDX license detected (`LICENSE` file)
+- [x] Images included in `README.md` (recommended for cover/gallery import)
 
 ## Changelog
 

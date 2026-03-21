@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.5 - 2026-03-21
+
+- Add `Preview URL` and `System Requirements` sections to `README.md`.
+- Align the Community Market checklist in `README.md` with the full submission template.
+
 ## 0.1.4 - 2026-03-19
 
 - Replace browser datalist behavior with a dedicated searchable game selector in Server Groups.
