@@ -3,7 +3,7 @@ Contributors: pbdaemon
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 0.1.4
+Stable tag: 0.1.5
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,8 +19,8 @@ Lists can be embedded anywhere with shortcodes and integrated in widget areas ac
 
 WordPress admins can embed lists with:
 
-* `[gamequery_123]`
-* `[gamequery id="123"]`
+* `[wpgs_list_123]`
+* `[wpgs_list id="123"]`
 
 Key features include:
 
@@ -28,6 +28,23 @@ Key features include:
 * Multi-game list support with templates and background refresh via WP-Cron.
 * Built-in analytics for views and clicks.
 * Campaign goal automation that can auto-hide a server list after owner-defined click/view limits are reached.
+
+== External services ==
+
+This plugin connects to GameQuery services for account connection, server data fetching, and game catalog lookup.
+
+1. GameQuery API (`https://api.gamequery.dev`) is used to fetch server payload data and the games catalog.
+   - Data sent on server fetch requests: configured `game_id` values, configured server `IP:PORT` values, API account email, API token, and selected API plan.
+   - Data sent on games catalog requests: no user identifiers or personal data; only a GET request for available games.
+   - Trigger: when list cache is refreshed (WP-Cron or cache miss) and when games catalog cache refreshes.
+   - Terms of Service: https://gamequery.dev/terms-of-service
+   - Privacy Policy: https://gamequery.dev/privacy-policy
+
+2. GameQuery account service (`https://gamequery.dev`) is used when an admin connects an account from plugin settings.
+   - Data sent: site URL, admin URL, plugin version, PKCE/session metadata, and temporary authorization/session tokens during the connect flow.
+   - Trigger: only after an admin clicks the connect button.
+   - Terms of Service: https://gamequery.dev/terms-of-service
+   - Privacy Policy: https://gamequery.dev/privacy-policy
 
 == Installation ==
 
@@ -37,6 +54,14 @@ Key features include:
 4. Create lists in `WPGS -> Lists`.
 
 == Changelog ==
+
+= 0.1.5 =
+* Remove per-list Custom CSS input and all frontend `<style>` injection paths.
+* Replace admin inline `<script>` blocks with `wp_enqueue_script()` + `wp_add_inline_script()`.
+* Move admin menu to a lower position in the WordPress sidebar.
+* Escape stats progress bar output at render time with `wp_kses()`.
+* Prefix shortcode names to `wpgs_list` and `wpgs_list_{id}`.
+* Add explicit external service disclosure with data usage plus Terms/Privacy links.
 
 = 0.1.4 =
 * Replace browser datalist behavior with a dedicated searchable game selector in Server Groups.

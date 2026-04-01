@@ -31,7 +31,7 @@ The plugin includes secure one-click account connection, multi-game list support
 - One-click secure GameQuery account connection with popup API key selection
 - Multi-game server groups per list (`game_id` + `servers[]`)
 - Built-in templates with live admin preview before publishing
-- Flexible shortcodes: `[gamequery_123]` and `[gamequery id="123"]`
+- Flexible shortcodes: `[wpgs_list_123]` and `[wpgs_list id="123"]`
 - Built-in analytics (views, clicks, unique counts) with dedicated stats page
 - Campaign goal automation to auto-hide lists after click/view limits are reached
 - WP-Cron background refresh with transient caching
@@ -64,8 +64,8 @@ The plugin includes secure one-click account connection, multi-game list support
 5. Embed your list in posts/pages with one of these shortcodes:
 
 ```text
-[gamequery_123]
-[gamequery id="123"]
+[wpgs_list_123]
+[wpgs_list id="123"]
 ```
 
 ## Install (repo-local)
@@ -85,13 +85,13 @@ Copy/sync the plugin folder into your WordPress plugins directory, then activate
 5. Embed in posts/pages:
 
 ```text
-[gamequery_123]
+[wpgs_list_123]
 ```
 
 or
 
 ```text
-[gamequery id="123"]
+[wpgs_list id="123"]
 ```
 
 ## Notes

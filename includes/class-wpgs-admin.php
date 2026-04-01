@@ -30,7 +30,7 @@ class WPGS_Admin {
             self::LISTS_PAGE_SLUG,
             '',
             'dashicons-list-view',
-            25
+            99
         );
 
         add_submenu_page(
@@ -101,6 +101,14 @@ class WPGS_Admin {
             $frontend_css_version
         );
 
+        wp_enqueue_script(
+            'wpgs-admin',
+            WPGS_PLUGIN_URL . 'assets/admin.js',
+            array(),
+            $admin_js_version,
+            true
+        );
+
         $settings_screens = array(
             WPGS_Lists::POST_TYPE . '_page_' . self::SETTINGS_SLUG,
             self::MENU_SLUG . '_page_' . self::SETTINGS_SLUG,
@@ -109,14 +117,6 @@ class WPGS_Admin {
         if (!in_array($screen->id, $settings_screens, true)) {
             return;
         }
-
-        wp_enqueue_script(
-            'wpgs-admin-settings',
-            WPGS_PLUGIN_URL . 'assets/admin.js',
-            array(),
-            $admin_js_version,
-            true
-        );
 
         $account_base_url = WPGS_Settings::get_account_base_url();
         $account_origin = '';
@@ -131,7 +131,7 @@ class WPGS_Admin {
         }
 
         wp_add_inline_script(
-            'wpgs-admin-settings',
+            'wpgs-admin',
             'window.WPGSConnect = ' . wp_json_encode(
                 array(
                     'ajaxUrl' => admin_url('admin-ajax.php'),
@@ -727,7 +727,7 @@ class WPGS_Admin {
                                             ?>
                                         </div>
                                     </td>
-                                    <td><code>[gamequery_<?php echo esc_html((string) $row['id']); ?>]</code></td>
+                                    <td><code>[wpgs_list_<?php echo esc_html((string) $row['id']); ?>]</code></td>
                                     <td><a class="wpgs-stats-cell-link" href="<?php echo esc_url((string) $row['stats_url']); ?>"><?php echo esc_html(number_format_i18n((int) $row['views_total'])); ?></a></td>
                                     <td><a class="wpgs-stats-cell-link" href="<?php echo esc_url((string) $row['stats_url']); ?>"><?php echo esc_html(number_format_i18n((int) $row['views_unique'])); ?></a></td>
                                     <td><a class="wpgs-stats-cell-link" href="<?php echo esc_url((string) $row['stats_url']); ?>"><?php echo esc_html(number_format_i18n((int) $row['clicks_total'])); ?></a></td>
@@ -752,23 +752,29 @@ class WPGS_Admin {
                 </table>
             </form>
 
-            <script>
-            (function () {
-                var selectAll = document.getElementById('wpgs-stats-select-all');
-                if (!selectAll) {
-                    return;
-                }
-
-                selectAll.addEventListener('change', function () {
-                    var checkboxes = document.querySelectorAll('.wpgs-stats-row-checkbox');
-                    for (var i = 0; i < checkboxes.length; i += 1) {
-                        checkboxes[i].checked = selectAll.checked;
-                    }
-                });
-            }());
-            </script>
+            <?php $this->enqueue_stats_list_bulk_script(); ?>
         </div>
         <?php
+    }
+
+    private function enqueue_stats_list_bulk_script() {
+        $script = <<<'JS'
+(function () {
+    var selectAll = document.getElementById('wpgs-stats-select-all');
+    if (!selectAll) {
+        return;
+    }
+
+    selectAll.addEventListener('change', function () {
+        var checkboxes = document.querySelectorAll('.wpgs-stats-row-checkbox');
+        for (var i = 0; i < checkboxes.length; i += 1) {
+            checkboxes[i].checked = selectAll.checked;
+        }
+    });
+}());
+JS;
+
+        wp_add_inline_script('wpgs-admin', $script);
     }
 
     /**
@@ -1060,7 +1066,7 @@ class WPGS_Admin {
             <div class="wpgs-stats-toolbar">
                 <div>
                     <h1><?php echo esc_html($title); ?></h1>
-                    <p class="description"><code>[gamequery_<?php echo esc_html((string) $list_id); ?>]</code></p>
+                    <p class="description"><code>[wpgs_list_<?php echo esc_html((string) $list_id); ?>]</code></p>
                 </div>
                 <div class="wpgs-stats-toolbar-actions">
                     <a class="button" href="<?php echo esc_url($back_url); ?>"><?php echo esc_html__('Back to all stats', 'gamequery-servers-lists'); ?></a>
@@ -1105,6 +1111,7 @@ class WPGS_Admin {
                     <?php
                     $views_ratio_hint = number_format_i18n($views_unique) . ' / ' . number_format_i18n($views_total);
                     $unique_clicks_hint = number_format_i18n($clicks_unique) . ' / ' . number_format_i18n($clicks_total);
+                    $progress_bar_allowed_html = $this->get_stats_progress_bar_allowed_html();
 
                     $views_ratio_bar = $this->render_stats_progress_bar(
                         __('Unique Views Ratio', 'gamequery-servers-lists'),
@@ -1122,10 +1129,8 @@ class WPGS_Admin {
                         $unique_clicks_hint
                     );
 
-                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Helper returns escaped admin HTML.
-                    echo $views_ratio_bar;
-                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Helper returns escaped admin HTML.
-                    echo $unique_clicks_bar;
+                    echo wp_kses($views_ratio_bar, $progress_bar_allowed_html);
+                    echo wp_kses($unique_clicks_bar, $progress_bar_allowed_html);
                     ?>
                 </div>
                 <div class="wpgs-stats-graph-card">
@@ -1150,10 +1155,8 @@ class WPGS_Admin {
                         $unique_ctr_hint
                     );
 
-                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Helper returns escaped admin HTML.
-                    echo $total_ctr_bar;
-                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Helper returns escaped admin HTML.
-                    echo $unique_ctr_bar;
+                    echo wp_kses($total_ctr_bar, $progress_bar_allowed_html);
+                    echo wp_kses($unique_ctr_bar, $progress_bar_allowed_html);
                     ?>
                 </div>
             </div>
@@ -1313,7 +1316,7 @@ class WPGS_Admin {
             ),
             array(
                 'label' => __('Shortcode', 'gamequery-servers-lists'),
-                'value' => '[gamequery_' . $list_id . ']',
+                'value' => '[wpgs_list_' . $list_id . ']',
             ),
             array(
                 'label' => __('Groups', 'gamequery-servers-lists'),
@@ -1467,6 +1470,27 @@ class WPGS_Admin {
         $html .= '</div>';
 
         return $html;
+    }
+
+    /**
+     * @return array<string, array<string, bool>>
+     */
+    private function get_stats_progress_bar_allowed_html() {
+        return array(
+            'div' => array(
+                'class' => true,
+            ),
+            'span' => array(
+                'class' => true,
+                'style' => true,
+            ),
+            'strong' => array(
+                'class' => true,
+            ),
+            'p' => array(
+                'class' => true,
+            ),
+        );
     }
 
     /**

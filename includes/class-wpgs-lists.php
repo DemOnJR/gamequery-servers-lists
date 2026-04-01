@@ -14,7 +14,6 @@ class WPGS_Lists {
     const META_CAMPAIGN_ENDED = '_wpgs_campaign_ended';
     const META_CAMPAIGN_ENDED_AT = '_wpgs_campaign_ended_at';
     const META_TEMPLATE = '_wpgs_template';
-    const META_CUSTOM_CSS = '_wpgs_custom_css';
     const META_SERVER_TOTAL = '_wpgs_server_total';
     const META_LIMIT_EXCEEDED = '_wpgs_server_limit_exceeded';
 
@@ -92,8 +91,8 @@ class WPGS_Lists {
         $post_id = absint($post_id);
 
         if ('wpgs_shortcode' === $column) {
-            echo '<code>[gamequery_' . esc_html((string) $post_id) . ']</code><br />';
-            echo '<code>[gamequery id=&quot;' . esc_html((string) $post_id) . '&quot;]</code>';
+            echo '<code>[wpgs_list_' . esc_html((string) $post_id) . ']</code><br />';
+            echo '<code>[wpgs_list id=&quot;' . esc_html((string) $post_id) . '&quot;]</code>';
             return;
         }
 
@@ -196,14 +195,6 @@ class WPGS_Lists {
             'default'
         );
 
-        add_meta_box(
-            'wpgs_css_metabox',
-            __('Custom CSS', 'gamequery-servers-lists'),
-            array($this, 'render_css_metabox'),
-            self::POST_TYPE,
-            'normal',
-            'default'
-        );
     }
 
     /**
@@ -490,394 +481,394 @@ class WPGS_Lists {
     }
 
     private function render_template_metabox_script() {
-        ?>
-        <script>
-            (function () {
-                const templateInput = document.getElementById('wpgs_template');
-                const templateSearch = document.getElementById('wpgs-template-search');
-                const templateCategory = document.getElementById('wpgs-template-category');
-                const templateEmpty = document.getElementById('wpgs-template-empty');
-                const templateLiveWrap = document.getElementById('wpgs-template-live-card-shell');
-                const templateLiveList = document.getElementById('wpgs-template-live-list');
-                const templateLiveTableWrap = document.getElementById('wpgs-template-live-table-wrap');
-                const templateLiveLabel = document.getElementById('wpgs-template-live-label');
-                const templatePreviewPanes = Array.prototype.slice.call(document.querySelectorAll('.wpgs-template-preview-pane'));
-                const templateCards = Array.prototype.slice.call(document.querySelectorAll('.wpgs-template-card'));
+        $script = <<<'JS'
+(function () {
+    const templateInput = document.getElementById('wpgs_template');
+    const templateSearch = document.getElementById('wpgs-template-search');
+    const templateCategory = document.getElementById('wpgs-template-category');
+    const templateEmpty = document.getElementById('wpgs-template-empty');
+    const templateLiveWrap = document.getElementById('wpgs-template-live-card-shell');
+    const templateLiveList = document.getElementById('wpgs-template-live-list');
+    const templateLiveTableWrap = document.getElementById('wpgs-template-live-table-wrap');
+    const templateLiveLabel = document.getElementById('wpgs-template-live-label');
+    const templatePreviewPanes = Array.prototype.slice.call(document.querySelectorAll('.wpgs-template-preview-pane'));
+    const templateCards = Array.prototype.slice.call(document.querySelectorAll('.wpgs-template-card'));
 
-                function cardByTemplateKey(templateKey) {
-                    for (let i = 0; i < templateCards.length; i += 1) {
-                        if (String(templateCards[i].dataset.templateKey || '') === templateKey) {
-                            return templateCards[i];
-                        }
-                    }
+    function cardByTemplateKey(templateKey) {
+        for (let i = 0; i < templateCards.length; i += 1) {
+            if (String(templateCards[i].dataset.templateKey || '') === templateKey) {
+                return templateCards[i];
+            }
+        }
 
-                    return null;
-                }
+        return null;
+    }
 
-                function clearThemeClasses(element, prefix) {
-                    if (!element) {
-                        return;
-                    }
+    function clearThemeClasses(element, prefix) {
+        if (!element) {
+            return;
+        }
 
-                    Array.prototype.slice.call(element.classList).forEach(function (className) {
-                        if (className.indexOf(prefix) === 0) {
-                            element.classList.remove(className);
-                        }
-                    });
-                }
+        Array.prototype.slice.call(element.classList).forEach(function (className) {
+            if (className.indexOf(prefix) === 0) {
+                element.classList.remove(className);
+            }
+        });
+    }
 
-                function hasPreviewPane(mode) {
-                    for (let i = 0; i < templatePreviewPanes.length; i += 1) {
-                        if (String(templatePreviewPanes[i].dataset.previewPane || '') === String(mode || '')) {
-                            return true;
-                        }
-                    }
+    function hasPreviewPane(mode) {
+        for (let i = 0; i < templatePreviewPanes.length; i += 1) {
+            if (String(templatePreviewPanes[i].dataset.previewPane || '') === String(mode || '')) {
+                return true;
+            }
+        }
 
-                    return false;
-                }
+        return false;
+    }
 
-                function showPreviewPane(mode) {
-                    templatePreviewPanes.forEach(function (pane) {
-                        const isActive = String(pane.dataset.previewPane || '') === mode;
-                        pane.classList.toggle('is-active', isActive);
-                        pane.hidden = !isActive;
-                    });
-                }
+    function showPreviewPane(mode) {
+        templatePreviewPanes.forEach(function (pane) {
+            const isActive = String(pane.dataset.previewPane || '') === mode;
+            pane.classList.toggle('is-active', isActive);
+            pane.hidden = !isActive;
+        });
+    }
 
-                function updateLivePreview(templateKey) {
-                    if (!templateCards.length) {
-                        return;
-                    }
+    function updateLivePreview(templateKey) {
+        if (!templateCards.length) {
+            return;
+        }
 
-                    const card = cardByTemplateKey(templateKey);
-                    const label = card ? String(card.dataset.label || '') : '';
-                    const previewMode = card ? String(card.dataset.previewMode || '') : '';
-                    const previewTheme = card ? String(card.dataset.previewTheme || '') : '';
-                    const previewWrap = card ? String(card.dataset.previewWrap || '') : '';
-                    const resolvedMode = previewMode || (previewTheme ? 'card-theme' : 'table');
-                    const resolvedTheme = previewTheme || 'clean';
-                    const activeMode = hasPreviewPane(resolvedMode) ? resolvedMode : 'table';
+        const card = cardByTemplateKey(templateKey);
+        const label = card ? String(card.dataset.label || '') : '';
+        const previewMode = card ? String(card.dataset.previewMode || '') : '';
+        const previewTheme = card ? String(card.dataset.previewTheme || '') : '';
+        const previewWrap = card ? String(card.dataset.previewWrap || '') : '';
+        const resolvedMode = previewMode || (previewTheme ? 'card-theme' : 'table');
+        const resolvedTheme = previewTheme || 'clean';
+        const activeMode = hasPreviewPane(resolvedMode) ? resolvedMode : 'table';
 
-                    if (templateLiveLabel) {
-                        templateLiveLabel.textContent = label;
-                    }
+        if (templateLiveLabel) {
+            templateLiveLabel.textContent = label;
+        }
 
-                    showPreviewPane(activeMode);
+        showPreviewPane(activeMode);
 
-                    if (templateLiveWrap) {
-                        templateLiveWrap.classList.remove('wpgs-glass-wrap', 'wpgs-frosted-wrap');
-                        if ('card-theme' === activeMode && previewWrap) {
-                            templateLiveWrap.classList.add(previewWrap);
-                        }
-                    }
+        if (templateLiveWrap) {
+            templateLiveWrap.classList.remove('wpgs-glass-wrap', 'wpgs-frosted-wrap');
+            if ('card-theme' === activeMode && previewWrap) {
+                templateLiveWrap.classList.add(previewWrap);
+            }
+        }
 
-                    if (templateLiveList) {
-                        clearThemeClasses(templateLiveList, 'wpgs-theme-');
-                        if ('card-theme' === activeMode) {
-                            templateLiveList.classList.add('wpgs-theme-' + resolvedTheme);
-                        }
-                    }
+        if (templateLiveList) {
+            clearThemeClasses(templateLiveList, 'wpgs-theme-');
+            if ('card-theme' === activeMode) {
+                templateLiveList.classList.add('wpgs-theme-' + resolvedTheme);
+            }
+        }
 
-                    if (templateLiveTableWrap) {
-                        clearThemeClasses(templateLiveTableWrap, 'wpgs-template-');
-                        if ('table' === activeMode) {
-                            templateLiveTableWrap.classList.add('wpgs-template-' + String(templateKey || 'classic'));
-                        }
-                    }
-                }
+        if (templateLiveTableWrap) {
+            clearThemeClasses(templateLiveTableWrap, 'wpgs-template-');
+            if ('table' === activeMode) {
+                templateLiveTableWrap.classList.add('wpgs-template-' + String(templateKey || 'classic'));
+            }
+        }
+    }
 
-                function selectTemplate(templateKey) {
-                    if (!templateInput || !templateKey) {
-                        return;
-                    }
+    function selectTemplate(templateKey) {
+        if (!templateInput || !templateKey) {
+            return;
+        }
 
-                    templateInput.value = templateKey;
-                    templateCards.forEach(function (card) {
-                        card.classList.toggle('is-selected', card.dataset.templateKey === templateKey);
-                    });
+        templateInput.value = templateKey;
+        templateCards.forEach(function (card) {
+            card.classList.toggle('is-selected', card.dataset.templateKey === templateKey);
+        });
 
-                    updateLivePreview(templateKey);
-                }
+        updateLivePreview(templateKey);
+    }
 
-                function filterTemplateCards() {
-                    if (!templateCards.length) {
-                        return;
-                    }
+    function filterTemplateCards() {
+        if (!templateCards.length) {
+            return;
+        }
 
-                    const query = templateSearch ? templateSearch.value.trim().toLowerCase() : '';
-                    const category = templateCategory ? templateCategory.value : '';
-                    let visibleCount = 0;
+        const query = templateSearch ? templateSearch.value.trim().toLowerCase() : '';
+        const category = templateCategory ? templateCategory.value : '';
+        let visibleCount = 0;
 
-                    templateCards.forEach(function (card) {
-                        const searchBlob = String(card.dataset.search || '').toLowerCase();
-                        const cardCategory = String(card.dataset.category || '');
+        templateCards.forEach(function (card) {
+            const searchBlob = String(card.dataset.search || '').toLowerCase();
+            const cardCategory = String(card.dataset.category || '');
 
-                        const matchesQuery = !query || searchBlob.indexOf(query) !== -1;
-                        const matchesCategory = !category || cardCategory === category;
-                        const isVisible = matchesQuery && matchesCategory;
-                        card.style.display = isVisible ? '' : 'none';
-                        if (isVisible) {
-                            visibleCount += 1;
-                        }
-                    });
+            const matchesQuery = !query || searchBlob.indexOf(query) !== -1;
+            const matchesCategory = !category || cardCategory === category;
+            const isVisible = matchesQuery && matchesCategory;
+            card.style.display = isVisible ? '' : 'none';
+            if (isVisible) {
+                visibleCount += 1;
+            }
+        });
 
-                    if (templateEmpty) {
-                        templateEmpty.style.display = visibleCount > 0 ? 'none' : '';
-                    }
-                }
+        if (templateEmpty) {
+            templateEmpty.style.display = visibleCount > 0 ? 'none' : '';
+        }
+    }
 
-                templateCards.forEach(function (card) {
-                    card.addEventListener('click', function () {
-                        selectTemplate(String(card.dataset.templateKey || ''));
-                    });
-                });
+    templateCards.forEach(function (card) {
+        card.addEventListener('click', function () {
+            selectTemplate(String(card.dataset.templateKey || ''));
+        });
+    });
 
-                if (templateSearch) {
-                    templateSearch.addEventListener('input', filterTemplateCards);
-                }
+    if (templateSearch) {
+        templateSearch.addEventListener('input', filterTemplateCards);
+    }
 
-                if (templateCategory) {
-                    templateCategory.addEventListener('change', filterTemplateCards);
-                }
+    if (templateCategory) {
+        templateCategory.addEventListener('change', filterTemplateCards);
+    }
 
-                filterTemplateCards();
+    filterTemplateCards();
 
-                if (templateInput && templateInput.value) {
-                    updateLivePreview(String(templateInput.value));
-                } else if (templateCards.length) {
-                    updateLivePreview(String(templateCards[0].dataset.templateKey || ''));
-                }
-            }());
-        </script>
-        <?php
+    if (templateInput && templateInput.value) {
+        updateLivePreview(String(templateInput.value));
+    } else if (templateCards.length) {
+        updateLivePreview(String(templateCards[0].dataset.templateKey || ''));
+    }
+}());
+JS;
+
+        wp_add_inline_script('wpgs-admin', $script);
     }
 
     private function render_groups_metabox_script() {
-        ?>
-        <script>
-            (function () {
-                const container = document.getElementById('wpgs-groups');
-                const addButton = document.getElementById('wpgs-add-group');
-                if (!container || !addButton) {
+        $script = <<<'JS'
+(function () {
+    const container = document.getElementById('wpgs-groups');
+    const addButton = document.getElementById('wpgs-add-group');
+    if (!container || !addButton) {
+        return;
+    }
+
+    function updateRemoveButtons() {
+        const rows = container.querySelectorAll('.wpgs-group-row');
+        rows.forEach(function (row) {
+            const button = row.querySelector('.wpgs-remove-group');
+            if (button) {
+                button.disabled = rows.length === 1;
+            }
+        });
+    }
+
+    function reindexRows() {
+        const rows = container.querySelectorAll('.wpgs-group-row');
+        rows.forEach(function (row, index) {
+            row.dataset.index = String(index);
+            const title = row.querySelector('.wpgs-group-title');
+            if (title) {
+                title.textContent = 'Group #' + String(index + 1);
+            }
+
+            row.querySelectorAll('input, textarea, select').forEach(function (field) {
+                if (!field.name) {
                     return;
                 }
 
-                function updateRemoveButtons() {
-                    const rows = container.querySelectorAll('.wpgs-group-row');
-                    rows.forEach(function (row) {
-                        const button = row.querySelector('.wpgs-remove-group');
-                        if (button) {
-                            button.disabled = rows.length === 1;
-                        }
-                    });
+                field.name = field.name.replace(/wpgs_groups\[\d+\]/, 'wpgs_groups[' + String(index) + ']');
+            });
+        });
+
+        updateRemoveButtons();
+    }
+
+    function attachRemoveHandlers() {
+        container.querySelectorAll('.wpgs-remove-group').forEach(function (button) {
+            if (button.dataset.bound === '1') {
+                return;
+            }
+
+            button.dataset.bound = '1';
+            button.addEventListener('click', function () {
+                const rows = container.querySelectorAll('.wpgs-group-row');
+                if (rows.length <= 1) {
+                    return;
                 }
 
-                function reindexRows() {
-                    const rows = container.querySelectorAll('.wpgs-group-row');
-                    rows.forEach(function (row, index) {
-                        row.dataset.index = String(index);
-                        const title = row.querySelector('.wpgs-group-title');
-                        if (title) {
-                            title.textContent = 'Group #' + String(index + 1);
-                        }
+                const row = this.closest('.wpgs-group-row');
+                if (row) {
+                    row.remove();
+                    reindexRows();
+                }
+            });
+        });
+    }
 
-                        row.querySelectorAll('input, textarea, select').forEach(function (field) {
-                            if (!field.name) {
-                                return;
-                            }
+    function bindGameSelectors() {
+        container.querySelectorAll('.wpgs-group-row').forEach(function (row) {
+            const searchField = row.querySelector('.wpgs-game-search');
+            const selectField = row.querySelector('.wpgs-game-select');
+            const manualField = row.querySelector('.wpgs-game-id-manual');
 
-                            field.name = field.name.replace(/wpgs_groups\[\d+\]/, 'wpgs_groups[' + String(index) + ']');
-                        });
-                    });
+            if (!searchField || !selectField) {
+                return;
+            }
 
-                    updateRemoveButtons();
+            if (selectField.dataset.optionSource !== '1') {
+                const options = Array.prototype.slice.call(selectField.options).map(function (option) {
+                    return {
+                        value: option.value,
+                        text: option.textContent || option.innerText || '',
+                    };
+                });
+
+                try {
+                    selectField.dataset.options = JSON.stringify(options);
+                    selectField.dataset.optionSource = '1';
+                } catch (error) {
+                    return;
+                }
+            }
+
+            function getOriginalOptions() {
+                if (!selectField.dataset.options) {
+                    return [];
                 }
 
-                function attachRemoveHandlers() {
-                    container.querySelectorAll('.wpgs-remove-group').forEach(function (button) {
-                        if (button.dataset.bound === '1') {
+                try {
+                    const parsed = JSON.parse(selectField.dataset.options);
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (error) {
+                    return [];
+                }
+            }
+
+            function restoreSelectOptions(filterText) {
+                const currentValue = selectField.value;
+                const normalizedFilter = String(filterText || '').trim().toLowerCase();
+                const options = getOriginalOptions();
+
+                if (!options.length) {
+                    return;
+                }
+
+                selectField.innerHTML = '';
+
+                options.forEach(function (option, index) {
+                    const optionValue = String(option.value || '');
+                    const optionText = String(option.text || '');
+
+                    if (index > 0 && '' !== normalizedFilter) {
+                        const optionSearch = (optionText + ' ' + optionValue).toLowerCase();
+                        if (-1 === optionSearch.indexOf(normalizedFilter)) {
                             return;
                         }
+                    }
 
-                        button.dataset.bound = '1';
-                        button.addEventListener('click', function () {
-                            const rows = container.querySelectorAll('.wpgs-group-row');
-                            if (rows.length <= 1) {
-                                return;
-                            }
+                    const optionNode = document.createElement('option');
+                    optionNode.value = optionValue;
+                    optionNode.textContent = optionText;
+                    if (optionValue === currentValue) {
+                        optionNode.selected = true;
+                    }
 
-                            const row = this.closest('.wpgs-group-row');
-                            if (row) {
-                                row.remove();
-                                reindexRows();
-                            }
-                        });
+                    selectField.appendChild(optionNode);
+                });
+
+                if (currentValue && !Array.prototype.slice.call(selectField.options).some(function (option) {
+                    return option.value === currentValue;
+                })) {
+                    const fallback = options.find(function (option) {
+                        return String(option.value || '') === currentValue;
                     });
+
+                    if (fallback) {
+                        const optionNode = document.createElement('option');
+                        optionNode.value = String(fallback.value || '');
+                        optionNode.textContent = String(fallback.text || '');
+                        optionNode.selected = true;
+                        selectField.appendChild(optionNode);
+                    }
                 }
+            }
 
-                function bindGameSelectors() {
-                    container.querySelectorAll('.wpgs-group-row').forEach(function (row) {
-                        const searchField = row.querySelector('.wpgs-game-search');
-                        const selectField = row.querySelector('.wpgs-game-select');
-                        const manualField = row.querySelector('.wpgs-game-id-manual');
+            if (searchField.dataset.boundGameSearch !== '1') {
+                searchField.dataset.boundGameSearch = '1';
+                searchField.addEventListener('input', function () {
+                    restoreSelectOptions(searchField.value || '');
+                });
+            }
 
-                        if (!searchField || !selectField) {
-                            return;
-                        }
-
-                        if (selectField.dataset.optionSource !== '1') {
-                            const options = Array.prototype.slice.call(selectField.options).map(function (option) {
-                                return {
-                                    value: option.value,
-                                    text: option.textContent || option.innerText || '',
-                                };
-                            });
-
-                            try {
-                                selectField.dataset.options = JSON.stringify(options);
-                                selectField.dataset.optionSource = '1';
-                            } catch (error) {
-                                return;
-                            }
-                        }
-
-                        function getOriginalOptions() {
-                            if (!selectField.dataset.options) {
-                                return [];
-                            }
-
-                            try {
-                                const parsed = JSON.parse(selectField.dataset.options);
-                                return Array.isArray(parsed) ? parsed : [];
-                            } catch (error) {
-                                return [];
-                            }
-                        }
-
-                        function restoreSelectOptions(filterText) {
-                            const currentValue = selectField.value;
-                            const normalizedFilter = String(filterText || '').trim().toLowerCase();
-                            const options = getOriginalOptions();
-
-                            if (!options.length) {
-                                return;
-                            }
-
-                            selectField.innerHTML = '';
-
-                            options.forEach(function (option, index) {
-                                const optionValue = String(option.value || '');
-                                const optionText = String(option.text || '');
-
-                                if (index > 0 && '' !== normalizedFilter) {
-                                    const optionSearch = (optionText + ' ' + optionValue).toLowerCase();
-                                    if (-1 === optionSearch.indexOf(normalizedFilter)) {
-                                        return;
-                                    }
-                                }
-
-                                const optionNode = document.createElement('option');
-                                optionNode.value = optionValue;
-                                optionNode.textContent = optionText;
-                                if (optionValue === currentValue) {
-                                    optionNode.selected = true;
-                                }
-
-                                selectField.appendChild(optionNode);
-                            });
-
-                            if (currentValue && !Array.prototype.slice.call(selectField.options).some(function (option) {
-                                return option.value === currentValue;
-                            })) {
-                                const fallback = options.find(function (option) {
-                                    return String(option.value || '') === currentValue;
-                                });
-
-                                if (fallback) {
-                                    const optionNode = document.createElement('option');
-                                    optionNode.value = String(fallback.value || '');
-                                    optionNode.textContent = String(fallback.text || '');
-                                    optionNode.selected = true;
-                                    selectField.appendChild(optionNode);
-                                }
-                            }
-                        }
-
-                        if (searchField.dataset.boundGameSearch !== '1') {
-                            searchField.dataset.boundGameSearch = '1';
-                            searchField.addEventListener('input', function () {
-                                restoreSelectOptions(searchField.value || '');
-                            });
-                        }
-
-                        if (selectField.dataset.boundGameSelect !== '1') {
-                            selectField.dataset.boundGameSelect = '1';
-                            selectField.addEventListener('change', function () {
-                                if (!manualField || !selectField.value) {
-                                    return;
-                                }
-
-                                manualField.value = '';
-                            });
-                        }
-
-                        if (manualField && manualField.dataset.boundManualInput !== '1') {
-                            manualField.dataset.boundManualInput = '1';
-                            manualField.addEventListener('input', function () {
-                                if ('' !== String(manualField.value || '').trim()) {
-                                    selectField.value = '';
-                                }
-                            });
-                        }
-
-                        restoreSelectOptions(searchField.value || '');
-                    });
-                }
-
-                function clearCloneState(clone) {
-                    clone.querySelectorAll('[data-bound], [data-bound-game-search], [data-bound-game-select], [data-bound-manual-input]').forEach(function (node) {
-                        delete node.dataset.bound;
-                        delete node.dataset.boundGameSearch;
-                        delete node.dataset.boundGameSelect;
-                        delete node.dataset.boundManualInput;
-                    });
-
-                    clone.querySelectorAll('.wpgs-game-select').forEach(function (selectField) {
-                        delete selectField.dataset.optionSource;
-                        delete selectField.dataset.options;
-                    });
-                }
-
-                addButton.addEventListener('click', function () {
-                    const rows = container.querySelectorAll('.wpgs-group-row');
-                    if (!rows.length) {
+            if (selectField.dataset.boundGameSelect !== '1') {
+                selectField.dataset.boundGameSelect = '1';
+                selectField.addEventListener('change', function () {
+                    if (!manualField || !selectField.value) {
                         return;
                     }
 
-                    const clone = rows[rows.length - 1].cloneNode(true);
-                    clearCloneState(clone);
-
-                    clone.querySelectorAll('input, textarea, select').forEach(function (field) {
-                        if ('SELECT' === field.tagName) {
-                            field.selectedIndex = 0;
-                            return;
-                        }
-
-                        field.value = '';
-                    });
-
-                    container.appendChild(clone);
-                    attachRemoveHandlers();
-                    bindGameSelectors();
-                    reindexRows();
+                    manualField.value = '';
                 });
+            }
 
-                attachRemoveHandlers();
-                bindGameSelectors();
-                reindexRows();
-            }());
-        </script>
-        <?php
+            if (manualField && manualField.dataset.boundManualInput !== '1') {
+                manualField.dataset.boundManualInput = '1';
+                manualField.addEventListener('input', function () {
+                    if ('' !== String(manualField.value || '').trim()) {
+                        selectField.value = '';
+                    }
+                });
+            }
+
+            restoreSelectOptions(searchField.value || '');
+        });
+    }
+
+    function clearCloneState(clone) {
+        clone.querySelectorAll('[data-bound], [data-bound-game-search], [data-bound-game-select], [data-bound-manual-input]').forEach(function (node) {
+            delete node.dataset.bound;
+            delete node.dataset.boundGameSearch;
+            delete node.dataset.boundGameSelect;
+            delete node.dataset.boundManualInput;
+        });
+
+        clone.querySelectorAll('.wpgs-game-select').forEach(function (selectField) {
+            delete selectField.dataset.optionSource;
+            delete selectField.dataset.options;
+        });
+    }
+
+    addButton.addEventListener('click', function () {
+        const rows = container.querySelectorAll('.wpgs-group-row');
+        if (!rows.length) {
+            return;
+        }
+
+        const clone = rows[rows.length - 1].cloneNode(true);
+        clearCloneState(clone);
+
+        clone.querySelectorAll('input, textarea, select').forEach(function (field) {
+            if ('SELECT' === field.tagName) {
+                field.selectedIndex = 0;
+                return;
+            }
+
+            field.value = '';
+        });
+
+        container.appendChild(clone);
+        attachRemoveHandlers();
+        bindGameSelectors();
+        reindexRows();
+    });
+
+    attachRemoveHandlers();
+    bindGameSelectors();
+    reindexRows();
+}());
+JS;
+
+        wp_add_inline_script('wpgs-admin', $script);
     }
 
     /**
@@ -1013,17 +1004,6 @@ class WPGS_Lists {
     }
 
     /**
-     * @param WP_Post $post
-     */
-    public function render_css_metabox($post) {
-        $custom_css = self::get_custom_css($post->ID);
-
-        echo '<p>' . esc_html__('Custom CSS will be printed with this list output. Scope it to the wrapper class to avoid affecting other elements.', 'gamequery-servers-lists') . '</p>';
-        echo '<p><code>.wpgs-list-' . esc_html((string) $post->ID) . ' .wpgs-table { /* your rules */ }</code></p>';
-        echo '<textarea name="wpgs_custom_css" rows="10" class="widefat code" placeholder=".wpgs-list-' . esc_attr((string) $post->ID) . ' .wpgs-table { border-radius: 8px; }">' . esc_textarea($custom_css) . '</textarea>';
-    }
-
-    /**
      * @param int $post_id
      */
     public function save_meta_boxes($post_id) {
@@ -1075,13 +1055,6 @@ class WPGS_Lists {
 
         $template = self::sanitize_template($raw_template);
         update_post_meta($post_id, self::META_TEMPLATE, $template);
-
-        $custom_css = '';
-        if (isset($_POST['wpgs_custom_css'])) {
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized in sanitize_custom_css().
-            $custom_css = $this->sanitize_custom_css((string) wp_unslash($_POST['wpgs_custom_css']));
-        }
-        update_post_meta($post_id, self::META_CUSTOM_CSS, $custom_css);
 
         $server_count = self::count_servers($groups);
         update_post_meta($post_id, self::META_SERVER_TOTAL, $server_count);
@@ -1184,17 +1157,6 @@ class WPGS_Lists {
      */
     private function sanitize_campaign($raw_campaign) {
         return self::normalize_campaign_settings($raw_campaign);
-    }
-
-    /**
-     * @param string $css
-     * @return string
-     */
-    private function sanitize_custom_css($css) {
-        $css = trim($css);
-        $css = str_replace(array('<', '>'), '', $css);
-
-        return $css;
     }
 
     /**
@@ -1790,19 +1752,6 @@ class WPGS_Lists {
         }
 
         return $sanitized;
-    }
-
-    /**
-     * @param int $post_id
-     * @return string
-     */
-    public static function get_custom_css($post_id) {
-        $value = get_post_meta($post_id, self::META_CUSTOM_CSS, true);
-        if (!is_string($value)) {
-            return '';
-        }
-
-        return trim($value);
     }
 
     /**

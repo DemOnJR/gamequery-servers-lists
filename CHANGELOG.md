@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.5 - 2026-04-01
+
+- Remove per-list Custom CSS input and all frontend `<style>` injection paths.
+- Replace admin inline `<script>` blocks with `wp_enqueue_script()` + `wp_add_inline_script()`.
+- Move the plugin admin menu to a lower sidebar position.
+- Escape stats progress bar output at render time with `wp_kses()`.
+- Prefix shortcodes to `wpgs_list` and `wpgs_list_{id}`.
+- Add explicit external service disclosure in `readme.txt` with data usage and Terms/Privacy links.
+
 ## 0.1.4 - 2026-03-19
 
 - Replace browser datalist behavior with a dedicated searchable game selector in Server Groups.

@@ -102,10 +102,10 @@ class WPGS_Widget extends WP_Widget {
 
         echo '<p>';
         echo '<label for="' . esc_attr($shortcode_field_id) . '">' . esc_html__('Shortcode Override (optional)', 'gamequery-servers-lists') . '</label>';
-        echo '<input class="widefat" id="' . esc_attr($shortcode_field_id) . '" name="' . esc_attr($shortcode_field_name) . '" type="text" value="' . esc_attr($shortcode) . '" placeholder="[gamequery_8]" />';
+        echo '<input class="widefat" id="' . esc_attr($shortcode_field_id) . '" name="' . esc_attr($shortcode_field_name) . '" type="text" value="' . esc_attr($shortcode) . '" placeholder="[wpgs_list_8]" />';
         echo '</p>';
 
-        echo '<p class="description">' . esc_html__('Examples: [gamequery_8], gamequery_8, [gamequery id="8"], or just 8. Shortcode override takes priority.', 'gamequery-servers-lists') . '</p>';
+        echo '<p class="description">' . esc_html__('Examples: [wpgs_list_8], wpgs_list_8, [wpgs_list id="8"], or just 8. Shortcode override takes priority.', 'gamequery-servers-lists') . '</p>';
     }
 
     /**
@@ -158,7 +158,7 @@ class WPGS_Widget extends WP_Widget {
             return '';
         }
 
-        return '[gamequery id="' . $list_id . '"]';
+        return '[wpgs_list id="' . $list_id . '"]';
     }
 
     /**
@@ -166,20 +166,20 @@ class WPGS_Widget extends WP_Widget {
      * @return string
      */
     private function normalize_shortcode($shortcode) {
-        if (preg_match('/^\[gamequery_(\d+)\]$/i', $shortcode, $matches)) {
-            return '[gamequery id="' . absint($matches[1]) . '"]';
+        if (preg_match('/^\[wpgs_list_(\d+)\]$/i', $shortcode, $matches)) {
+            return '[wpgs_list id="' . absint($matches[1]) . '"]';
         }
 
-        if (preg_match('/^gamequery_(\d+)$/i', $shortcode, $matches)) {
-            return '[gamequery id="' . absint($matches[1]) . '"]';
+        if (preg_match('/^wpgs_list_(\d+)$/i', $shortcode, $matches)) {
+            return '[wpgs_list id="' . absint($matches[1]) . '"]';
         }
 
-        if (preg_match('/^\[gamequery\s+id\s*=\s*["\']?(\d+)["\']?\s*\]$/i', $shortcode, $matches)) {
-            return '[gamequery id="' . absint($matches[1]) . '"]';
+        if (preg_match('/^\[wpgs_list\s+id\s*=\s*["\']?(\d+)["\']?\s*\]$/i', $shortcode, $matches)) {
+            return '[wpgs_list id="' . absint($matches[1]) . '"]';
         }
 
         if (preg_match('/^(\d+)$/', $shortcode, $matches)) {
-            return '[gamequery id="' . absint($matches[1]) . '"]';
+            return '[wpgs_list id="' . absint($matches[1]) . '"]';
         }
 
         return $shortcode;

@@ -58,20 +58,18 @@ class WPGS_Renderer {
             return $this->render_notice(__('No server data available yet.', 'gamequery-servers-lists'), 'info');
         }
 
-        $custom_css = WPGS_Lists::get_custom_css($list_id);
-
         $card_theme = WPGS_Lists::get_card_theme_for_template($template);
         if ('' !== $card_theme) {
             $card_theme_wrap = WPGS_Lists::get_card_theme_wrap_for_template($template);
-            return $this->render_cards_layout($list_id, $template, $rows, $display, $custom_css, $card_theme, $card_theme_wrap);
+            return $this->render_cards_layout($list_id, $template, $rows, $display, $card_theme, $card_theme_wrap);
         }
 
         if (WPGS_Lists::is_format_template($template)) {
-            return $this->render_format_layout($list_id, $template, $rows, $display, $custom_css);
+            return $this->render_format_layout($list_id, $template, $rows, $display);
         }
 
         $columns = $this->resolve_columns($display);
-        return $this->render_table_layout($list_id, $template, $rows, $columns, $custom_css, $display);
+        return $this->render_table_layout($list_id, $template, $rows, $columns, $display);
     }
 
     /**
@@ -79,27 +77,26 @@ class WPGS_Renderer {
      * @param string $template
      * @param array<int, array<string, string>> $rows
      * @param array<string, int> $display
-     * @param string $custom_css
      * @return string
      */
-    private function render_format_layout($list_id, $template, $rows, $display, $custom_css) {
+    private function render_format_layout($list_id, $template, $rows, $display) {
         if ('strip' === $template) {
-            return $this->render_strip_layout($list_id, $template, $rows, $display, $custom_css);
+            return $this->render_strip_layout($list_id, $template, $rows, $display);
         }
 
         if ('sidebar-compact' === $template) {
-            return $this->render_sidebar_compact_layout($list_id, $template, $rows, $display, $custom_css);
+            return $this->render_sidebar_compact_layout($list_id, $template, $rows, $display);
         }
 
         if ('sidebar-dark' === $template) {
-            return $this->render_sidebar_dark_layout($list_id, $template, $rows, $display, $custom_css);
+            return $this->render_sidebar_dark_layout($list_id, $template, $rows, $display);
         }
 
         if ('grid-cards' === $template) {
-            return $this->render_grid_cards_layout($list_id, $template, $rows, $display, $custom_css);
+            return $this->render_grid_cards_layout($list_id, $template, $rows, $display);
         }
 
-        return $this->render_minimal_list_layout($list_id, $template, $rows, $display, $custom_css);
+        return $this->render_minimal_list_layout($list_id, $template, $rows, $display);
     }
 
     /**
@@ -107,10 +104,9 @@ class WPGS_Renderer {
      * @param string $template
      * @param array<int, array<string, string>> $rows
      * @param array<string, int> $display
-     * @param string $custom_css
      * @return string
      */
-    private function render_strip_layout($list_id, $template, $rows, $display, $custom_css) {
+    private function render_strip_layout($list_id, $template, $rows, $display) {
         $show_name = !empty($display['show_name']);
         $show_address = !empty($display['show_address']);
         $show_map = !empty($display['show_map']);
@@ -125,9 +121,6 @@ class WPGS_Renderer {
 
         $html = '';
         $html .= '<div class="wpgs-list wpgs-list-' . esc_attr((string) $list_id) . ' wpgs-template-' . esc_attr($template) . ' wpgs-layout-strip" data-list-id="' . esc_attr((string) $list_id) . '">';
-        if (!empty($custom_css)) {
-            $html .= '<style>' . esc_html($custom_css) . '</style>';
-        }
 
         foreach ($rows as $row) {
             $status_token = $this->status_token(isset($row['status']) ? (string) $row['status'] : '');
@@ -179,10 +172,9 @@ class WPGS_Renderer {
      * @param string $template
      * @param array<int, array<string, string>> $rows
      * @param array<string, int> $display
-     * @param string $custom_css
      * @return string
      */
-    private function render_sidebar_compact_layout($list_id, $template, $rows, $display, $custom_css) {
+    private function render_sidebar_compact_layout($list_id, $template, $rows, $display) {
         $show_name = !empty($display['show_name']);
         $show_address = !empty($display['show_address']);
         $show_players = !empty($display['show_players']);
@@ -196,9 +188,6 @@ class WPGS_Renderer {
 
         $html = '';
         $html .= '<div class="wpgs-list wpgs-list-' . esc_attr((string) $list_id) . ' wpgs-template-' . esc_attr($template) . ' wpgs-layout-sidebar-compact" data-list-id="' . esc_attr((string) $list_id) . '">';
-        if (!empty($custom_css)) {
-            $html .= '<style>' . esc_html($custom_css) . '</style>';
-        }
 
         foreach ($rows as $row) {
             $status_token = $this->status_token(isset($row['status']) ? (string) $row['status'] : '');
@@ -239,10 +228,9 @@ class WPGS_Renderer {
      * @param string $template
      * @param array<int, array<string, string>> $rows
      * @param array<string, int> $display
-     * @param string $custom_css
      * @return string
      */
-    private function render_sidebar_dark_layout($list_id, $template, $rows, $display, $custom_css) {
+    private function render_sidebar_dark_layout($list_id, $template, $rows, $display) {
         $show_name = !empty($display['show_name']);
         $show_address = !empty($display['show_address']);
         $show_players = !empty($display['show_players']);
@@ -256,10 +244,6 @@ class WPGS_Renderer {
 
         $html = '';
         $html .= '<div class="wpgs-layout-sidebar-dark-wrap">';
-        if (!empty($custom_css)) {
-            $html .= '<style>' . esc_html($custom_css) . '</style>';
-        }
-
         $html .= '<div class="wpgs-list wpgs-list-' . esc_attr((string) $list_id) . ' wpgs-template-' . esc_attr($template) . ' wpgs-layout-sidebar-dark" data-list-id="' . esc_attr((string) $list_id) . '">';
         foreach ($rows as $row) {
             $status_token = $this->status_token(isset($row['status']) ? (string) $row['status'] : '');
@@ -301,10 +285,9 @@ class WPGS_Renderer {
      * @param string $template
      * @param array<int, array<string, string>> $rows
      * @param array<string, int> $display
-     * @param string $custom_css
      * @return string
      */
-    private function render_grid_cards_layout($list_id, $template, $rows, $display, $custom_css) {
+    private function render_grid_cards_layout($list_id, $template, $rows, $display) {
         $show_name = !empty($display['show_name']);
         $show_address = !empty($display['show_address']);
         $show_map = !empty($display['show_map']);
@@ -319,9 +302,6 @@ class WPGS_Renderer {
 
         $html = '';
         $html .= '<div class="wpgs-list wpgs-list-' . esc_attr((string) $list_id) . ' wpgs-template-' . esc_attr($template) . ' wpgs-layout-grid-cards" data-list-id="' . esc_attr((string) $list_id) . '">';
-        if (!empty($custom_css)) {
-            $html .= '<style>' . esc_html($custom_css) . '</style>';
-        }
 
         foreach ($rows as $row) {
             $status_token = $this->status_token(isset($row['status']) ? (string) $row['status'] : '');
@@ -374,10 +354,9 @@ class WPGS_Renderer {
      * @param string $template
      * @param array<int, array<string, string>> $rows
      * @param array<string, int> $display
-     * @param string $custom_css
      * @return string
      */
-    private function render_minimal_list_layout($list_id, $template, $rows, $display, $custom_css) {
+    private function render_minimal_list_layout($list_id, $template, $rows, $display) {
         $show_name = !empty($display['show_name']);
         $show_address = !empty($display['show_address']);
         $show_map = !empty($display['show_map']);
@@ -392,9 +371,6 @@ class WPGS_Renderer {
 
         $html = '';
         $html .= '<div class="wpgs-list wpgs-list-' . esc_attr((string) $list_id) . ' wpgs-template-' . esc_attr($template) . ' wpgs-layout-minimal-list" data-list-id="' . esc_attr((string) $list_id) . '">';
-        if (!empty($custom_css)) {
-            $html .= '<style>' . esc_html($custom_css) . '</style>';
-        }
 
         foreach ($rows as $row) {
             $status_token = $this->status_token(isset($row['status']) ? (string) $row['status'] : '');
@@ -448,18 +424,14 @@ class WPGS_Renderer {
      * @param string $template
      * @param array<int, array<string, string>> $rows
      * @param array<int, array<string, string>> $columns
-     * @param string $custom_css
      * @param array<string, int> $display
      * @return string
      */
-    private function render_table_layout($list_id, $template, $rows, $columns, $custom_css, $display) {
+    private function render_table_layout($list_id, $template, $rows, $columns, $display) {
         $html = '';
         $show_copy_address = !empty($display['show_copy_address']);
 
         $html .= '<div class="wpgs-list wpgs-list-' . esc_attr((string) $list_id) . ' wpgs-template-' . esc_attr($template) . '" data-list-id="' . esc_attr((string) $list_id) . '">';
-        if (!empty($custom_css)) {
-            $html .= '<style>' . esc_html($custom_css) . '</style>';
-        }
 
         $html .= '<div class="wpgs-table-wrapper">';
         $html .= '<table class="wpgs-table">';
@@ -500,12 +472,11 @@ class WPGS_Renderer {
      * @param string $template
      * @param array<int, array<string, string>> $rows
      * @param array<string, int> $display
-     * @param string $custom_css
      * @param string $card_theme
      * @param string $card_theme_wrap
      * @return string
      */
-    private function render_cards_layout($list_id, $template, $rows, $display, $custom_css, $card_theme, $card_theme_wrap = '') {
+    private function render_cards_layout($list_id, $template, $rows, $display, $card_theme, $card_theme_wrap = '') {
         $show_name = !empty($display['show_name']);
         $show_address = !empty($display['show_address']);
         $show_map = !empty($display['show_map']);
@@ -542,10 +513,6 @@ class WPGS_Renderer {
         }
 
         $html .= '<div class="' . esc_attr($wrapper_class_string) . '" data-list-id="' . esc_attr((string) $list_id) . '">';
-        if (!empty($custom_css)) {
-            $html .= '<style>' . esc_html($custom_css) . '</style>';
-        }
-
         $html .= '<div class="wpgs-cards">';
         foreach ($rows as $row) {
             $name = isset($row['name']) ? (string) $row['name'] : '';

@@ -5,6 +5,9 @@ if (!defined('ABSPATH')) {
 }
 
 class WPGS_Shortcodes {
+    const SHORTCODE_ALIAS = 'wpgs_list';
+    const SHORTCODE_DYNAMIC_PREFIX = 'wpgs_list_';
+
     /**
      * @var WPGS_Renderer
      */
@@ -18,7 +21,7 @@ class WPGS_Shortcodes {
     }
 
     public function register() {
-        add_shortcode('gamequery', array($this, 'render_alias_shortcode'));
+        add_shortcode(self::SHORTCODE_ALIAS, array($this, 'render_alias_shortcode'));
         add_action('init', array($this, 'register_dynamic_shortcodes'), 20);
         add_filter('widget_custom_html_content', array($this, 'render_widget_shortcodes'), 11);
     }
@@ -39,7 +42,7 @@ class WPGS_Shortcodes {
         }
 
         foreach ($list_ids as $list_id) {
-            $shortcode_tag = 'gamequery_' . absint($list_id);
+            $shortcode_tag = self::SHORTCODE_DYNAMIC_PREFIX . absint($list_id);
             add_shortcode($shortcode_tag, array($this, 'render_dynamic_shortcode'));
         }
     }
@@ -54,7 +57,7 @@ class WPGS_Shortcodes {
                 'id' => 0,
             ),
             $atts,
-            'gamequery'
+            self::SHORTCODE_ALIAS
         );
 
         $list_id = absint($atts['id']);
@@ -72,7 +75,7 @@ class WPGS_Shortcodes {
      * @return string
      */
     public function render_dynamic_shortcode($atts, $content = null, $tag = '') {
-        if (!preg_match('/^gamequery_(\d+)$/', (string) $tag, $matches)) {
+        if (!preg_match('/^wpgs_list_(\d+)$/', (string) $tag, $matches)) {
             return '';
         }
 
@@ -93,7 +96,7 @@ class WPGS_Shortcodes {
             return $content;
         }
 
-        if (false === strpos($content, '[gamequery')) {
+        if (false === strpos($content, '[' . self::SHORTCODE_ALIAS)) {
             return $content;
         }
 
