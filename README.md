@@ -47,7 +47,7 @@ The plugin includes secure one-click account connection, multi-game list support
 
 ## Preview URL
 
-- https://gamequery.dev
+- https://wordpress.gamequery.dev/
 
 ## System Requirements
 
