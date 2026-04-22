@@ -284,16 +284,30 @@ class WPGS_Admin {
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wpgs_token"><?php echo esc_html__('API Token', 'gamequery-servers-lists'); ?></label></th>
+                            <th scope="row">
+                                <label for="wpgs_token"><?php echo esc_html__('API Token', 'gamequery-servers-lists'); ?></label>
+                                <?php if (!empty($settings['token'])) : ?>
+                                    <br /><small><?php echo esc_html__('(saved)', 'gamequery-servers-lists'); ?></small>
+                                <?php endif; ?>
+                            </th>
                             <td>
                                 <input
                                     type="password"
                                     id="wpgs_token"
                                     name="wpgs_settings[token]"
-                                    value="<?php echo esc_attr((string) $settings['token']); ?>"
+                                    value=""
                                     class="regular-text"
                                     autocomplete="off"
+                                    placeholder="<?php echo !empty($settings['token']) ? esc_attr__('Leave blank to keep current token', 'gamequery-servers-lists') : esc_attr__('Paste your API token', 'gamequery-servers-lists'); ?>"
                                 />
+                                <?php if (!empty($settings['token'])) : ?>
+                                    <p>
+                                        <label>
+                                            <input type="checkbox" name="wpgs_settings[clear_token]" value="1" />
+                                            <?php echo esc_html__('Clear saved token on save', 'gamequery-servers-lists'); ?>
+                                        </label>
+                                    </p>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <tr>

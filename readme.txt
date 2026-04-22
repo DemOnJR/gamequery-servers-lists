@@ -3,7 +3,7 @@ Contributors: pbdaemon
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 0.1.5
+Stable tag: 0.1.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,6 +54,11 @@ This plugin connects to GameQuery services for account connection, server data f
 4. Create lists in `WPGS -> Lists`.
 
 == Changelog ==
+
+= 0.1.6 =
+* Security: stop pre-filling the API token field in Settings; the stored value is no longer echoed into the HTML. A "(saved)" indicator and optional "Clear saved token" checkbox replace the old behavior.
+* Security: restrict the Account Base URL and API Base URL settings to `gamequery.dev` hosts by default and block loopback/private/link-local targets. Define `WPGS_ALLOW_CUSTOM_API_URL` in `wp-config.php` to opt-in to custom hosts for staging/dev setups.
+* Security: require `https://` for the default GameQuery endpoints and reject URLs containing embedded credentials.
 
 = 0.1.5 =
 * Remove per-list Custom CSS input and all frontend `<style>` injection paths.

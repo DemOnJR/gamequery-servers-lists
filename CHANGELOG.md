@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.6 - 2026-04-22
+
+- Security: stop pre-filling the API token field in Settings; the stored value is no longer echoed into the HTML. A "(saved)" indicator and optional "Clear saved token" checkbox replace the old behavior.
+- Security: restrict the Account Base URL and API Base URL settings to `gamequery.dev` hosts by default and block loopback/private/link-local targets. Define `WPGS_ALLOW_CUSTOM_API_URL` in `wp-config.php` to opt-in to custom hosts for staging/dev setups.
+- Security: require `https://` for the default GameQuery endpoints and reject URLs containing embedded credentials.
+
 ## 0.1.5 - 2026-04-01
 
 - Remove per-list Custom CSS input and all frontend `<style>` injection paths.

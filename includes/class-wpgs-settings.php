@@ -55,20 +55,31 @@ class WPGS_Settings {
      */
     public static function sanitize_settings($raw) {
         $defaults = self::get_defaults();
+        $current = self::get_settings();
 
         $email = isset($raw['email']) ? sanitize_email((string) $raw['email']) : '';
-        $token = isset($raw['token']) ? sanitize_text_field((string) $raw['token']) : '';
+
+        $token_input = isset($raw['token']) ? trim(sanitize_text_field((string) $raw['token'])) : '';
+        $clear_token = !empty($raw['clear_token']);
+        if ($clear_token) {
+            $token = '';
+        } elseif ('' === $token_input) {
+            $token = isset($current['token']) ? (string) $current['token'] : '';
+        } else {
+            $token = $token_input;
+        }
+
         $plan = isset($raw['plan']) ? self::normalize_plan((string) $raw['plan']) : 'FREE';
 
         $account_base_url = isset($raw['account_base_url']) ? esc_url_raw((string) $raw['account_base_url']) : $defaults['account_base_url'];
         $account_base_url = untrailingslashit((string) $account_base_url);
-        if (empty($account_base_url)) {
+        if (empty($account_base_url) || !self::is_allowed_api_host($account_base_url)) {
             $account_base_url = (string) $defaults['account_base_url'];
         }
 
         $api_base_url = isset($raw['api_base_url']) ? esc_url_raw((string) $raw['api_base_url']) : $defaults['api_base_url'];
         $api_base_url = untrailingslashit((string) $api_base_url);
-        if (empty($api_base_url)) {
+        if (empty($api_base_url) || !self::is_allowed_api_host($api_base_url)) {
             $api_base_url = (string) $defaults['api_base_url'];
         }
 
@@ -85,6 +96,58 @@ class WPGS_Settings {
             'api_base_url' => $api_base_url,
             'cache_ttl' => $cache_ttl,
         );
+    }
+
+    /**
+     * Validate that a URL points to a host the plugin is permitted to contact.
+     * Blocks loopback/private/link-local targets and, by default, restricts to gamequery.dev.
+     * Admins can opt-in to custom hosts by defining `WPGS_ALLOW_CUSTOM_API_URL` in wp-config.php.
+     *
+     * @param string $url
+     * @return bool
+     */
+    public static function is_allowed_api_host($url) {
+        $url = (string) $url;
+        if ('' === $url) {
+            return false;
+        }
+
+        $scheme = wp_parse_url($url, PHP_URL_SCHEME);
+        if (!is_string($scheme)) {
+            return false;
+        }
+        $scheme = strtolower($scheme);
+        if (!in_array($scheme, array('http', 'https'), true)) {
+            return false;
+        }
+
+        $user = wp_parse_url($url, PHP_URL_USER);
+        $pass = wp_parse_url($url, PHP_URL_PASS);
+        if (!empty($user) || !empty($pass)) {
+            return false;
+        }
+
+        $host = wp_parse_url($url, PHP_URL_HOST);
+        if (!is_string($host) || '' === $host) {
+            return false;
+        }
+        $host = strtolower($host);
+
+        if (in_array($host, array('localhost', 'localhost.localdomain', 'ip6-localhost', 'ip6-loopback'), true)) {
+            return false;
+        }
+
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            if (!filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                return false;
+            }
+        }
+
+        if (defined('WPGS_ALLOW_CUSTOM_API_URL') && WPGS_ALLOW_CUSTOM_API_URL) {
+            return true;
+        }
+
+        return 'https' === $scheme && (bool) preg_match('/(^|\.)gamequery\.dev$/i', $host);
     }
 
     /**
